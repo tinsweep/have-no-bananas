@@ -8,9 +8,9 @@ import static junit.framework.Assert.fail;
 
 public class RepeatNumberTest {
 
-
+    @Test
     public void testGiveFirst(){
         RepeatNumber rn = new RepeatNumber(1,2);
-        asserEquals("Trvial test just to test build.xml",rn.giveFirst(),1);
+        assertEquals("Trvial test just to test build.xml",rn.giveFirst(),1);
     }
 }

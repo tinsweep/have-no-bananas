@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<project name="Have-No-Bananas" default="all" basedir=".">
+<project name="have-no-bananas" default="all" basedir=".">
 
     <property name="src.dir" value="src${file.separator}main${file.separator}java" description="project source code"/>
     <property name="src-test.dir" value="src${file.separator}test${file.separator}java" description="project test code"/>

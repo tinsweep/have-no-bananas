@@ -5,7 +5,7 @@ package bananas;
  */
 public interface ListItemInfo {
     public String getName();
-    public void setQuantity(Double); //Double instead of int for 1.25 lbs
+    public void setQuantity(Double q); //Double instead of int for 1.25 lbs
     public Double getQuantity();
     public void setUnit(String unit);
     public String getUnit();

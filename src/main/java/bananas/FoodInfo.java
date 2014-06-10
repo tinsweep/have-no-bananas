@@ -5,7 +5,8 @@ package bananas;
  * Interface to provide framework for a FoodItem object.
  */
 public interface FoodInfo {
+    public void setName(String name);
     public String getName();
-    public void setCategory(String catagory);
+    public void setCategory(String category);
     public String getCategory();
 }

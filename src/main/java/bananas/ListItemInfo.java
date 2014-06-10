@@ -3,7 +3,7 @@ package bananas;
 /**
  * Created by Jen on 6/9/2014.
  */
-public interface ListItem {
+public interface ListItemInfo {
     public String getName();
     public void setQuantity(Double); //Double instead of int for 1.25 lbs
     public Double getQuantity();

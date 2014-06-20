@@ -8,18 +8,17 @@ import java.sql.SQLException;
 
 
 public class DBConnector {
+	//creates database named ShoppingLists in folder bananas within th users home directory
 	private static final String URL = "jdbc:h2:~/bananas/ShoppingLists";
-	private Connection conn;
-	public DBConnector() throws SQLException{
+	private DBConnector(){
+		//to prevent instantiation of class
+	}
+	public static Connection getConnection(Connection conn){
 		try{
-			
 			conn = DriverManager.getConnection(URL);
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
-	}
-	
-	public Connection getConnection(){
 		return conn;
 		
 	}

@@ -13,7 +13,6 @@ import org.junit.Test;
  * Created by Bryan on 6/18/2014.
  **/
 public class DBConnectorTest {
-	private DBConnector c;
 	private Connection con;
 	private ResultSet rs;
 	private Statement st;
@@ -22,8 +21,8 @@ public class DBConnectorTest {
 	public void testGetConnection() throws SQLException{
 		try{
 			//Arrange Test
-			c = new DBConnector();
-			con = c.getConnection();
+			
+			con = DBConnector.getConnection(con);
 			
 			//create a table to test
 			ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS shoppingListTest("

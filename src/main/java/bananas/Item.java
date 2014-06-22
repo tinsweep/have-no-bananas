@@ -5,7 +5,7 @@ package bananas;
  */
 abstract class Item {
 
-    abstract void setName(String n);
+    //abstract void setName(String n);
     abstract String getName();
     abstract void setCategory(String c);
     abstract String getCategory();

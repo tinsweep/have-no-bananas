@@ -37,7 +37,7 @@ public class FoodItemTest {
     @Test
     public void testGetCategory(){
         FoodItem food = new FoodItem(testStartName, testCategory);
-        assertEquals("Test setCategory: ", food.getCategory(),testCategory);
+        assertEquals("Test getCategory: ", food.getCategory(),testCategory);
     }
 
     @Test

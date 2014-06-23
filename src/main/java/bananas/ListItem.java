@@ -12,6 +12,22 @@ public class ListItem extends Item {
     private Double price;
     private FoodItem foodItem;
 
+    /*
+    This class uses the builder method in place of a constructor.  This is to
+    make it easier to create an object when using one of several parameter
+    combinations.
+
+    The required parameter is FoodItem- a ListItem is a FoodItem with additional
+    attributes.  Optional parameters are name, quantity, category, unit, and
+    price.  All numeric parameters are Double.
+
+    To create a ListItem object, use the following syntax:
+
+    ListItem listItem = new ListItem.CreateListItem(foodItem).quantity(qty).unit(itemUnit).price(itemPrice).create();
+
+    You can leave out parameters you don't need or don't have, but you must
+    begin the declaration with "ListItem.CreateListItem(FoodItem)" and end the statement with ".create();".
+     */
     public static class CreateListItem {
 
         //Required parameter
@@ -28,8 +44,8 @@ public class ListItem extends Item {
             foodItem = val;
         }
 
-        public CreateListItem name(String val){
-            name = val;
+        public CreateListItem name(){
+            name = foodItem.getName();
             return this;
         }
 

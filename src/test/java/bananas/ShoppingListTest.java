@@ -16,6 +16,11 @@ public class ShoppingListTest {
     private ArrayList<ListItem> rtnShoppingList = new ArrayList<ListItem>(5);
     private String name;
 
+    private ArrayList<ListItem> internalShoppingList = new ArrayList<ListItem>(3);
+    private ArrayList<ListItem> externalShoppingList = new ArrayList<ListItem>(4);
+    private String internalName;
+    private String externalName;
+
     private Double lettuceQty = 1.0;  private String lettuceUnit = "head";       private Double lettucePrice = 0.89;
     private Double yogurtQty = 5.0;   private String yogurtUnit  = "container";  private Double yogurtPrice = 1.29;
     private Double breadQty = 1.0;    private String breadUnit   = "loaf";       private Double breadPrice  = 2.79;
@@ -43,6 +48,12 @@ public class ShoppingListTest {
         testShoppingList.add(ryeWhiskeyListed);
 
         name = "TestList";
+
+        internalShoppingList.add(lettuceListed);
+        internalShoppingList.add(yogurtListed);
+        internalShoppingList.add(breadListed);
+
+        internalName = "Equals List";
     }
 
     @Test
@@ -133,4 +144,156 @@ public class ShoppingListTest {
         assertFalse("Testing clearList: check item not there - ", yogurtListed.equals(shoppingList.getItem(yogurtListed.getName())));
         shoppingList = null;
     }
+
+    @Test
+    public void testItemExistsByName(){
+        ShoppingList shoppingList = new ShoppingList(name);
+        shoppingList.addList(testShoppingList);
+        assertTrue("Testing positive itemExistsByName - ", shoppingList.itemExistsByName(lettuceListed.getName()));
+        assertFalse("Testing negative itemExistsByName - ", shoppingList.itemExistsByName("baloney"));
+    }
+
+    @Test
+    public void testEqualsTrue(){
+        ShoppingList shoppingList = new ShoppingList(internalName);
+        shoppingList.addList(internalShoppingList);
+
+        //Set up ShoppingList to check against
+        ShoppingList compList = new ShoppingList(internalName);
+        compList.addList(internalShoppingList);
+
+        assertTrue("Testing equals when lists are equal - ", shoppingList.equals(compList));
+        shoppingList = null;
+        compList = null;
+
+    }
+
+    @Test
+    public void testEqualsDiffName(){
+        ShoppingList shoppingList = new ShoppingList(internalName);
+        shoppingList.addList(internalShoppingList);
+
+        //Set up ShoppingList to check against
+        ShoppingList compList = new ShoppingList("nope");
+        compList.addList(internalShoppingList);
+
+        assertFalse("Testing equals when names are diff - ", shoppingList.equals(compList));
+        shoppingList = null;
+        compList = null;
+
+    }
+
+    @Test
+    public void testEqualsDiffNumberOfItems(){
+        ShoppingList shoppingList = new ShoppingList(internalName);
+        shoppingList.addList(internalShoppingList);
+
+        //Set up ShoppingList to check against
+        externalShoppingList.add(lettuceListed);
+        ShoppingList compList = new ShoppingList(internalName);
+        compList.addList(externalShoppingList);
+
+        assertFalse("Testing equals is false if list have diff # of items - ", shoppingList.equals(compList));
+        shoppingList = null;
+        compList = null;
+
+    }
+
+    @Test
+    public void testEqualsDiffItems(){
+        ShoppingList shoppingList = new ShoppingList(internalName);
+        shoppingList.addList(internalShoppingList);
+
+        //Set up ShoppingList to check against
+        externalShoppingList.add(lettuceListed);
+        externalShoppingList.add(yogurtListed);
+        externalShoppingList.add(shampooListed);
+        ShoppingList compList = new ShoppingList(internalName);
+        compList.addList(externalShoppingList);
+
+        assertFalse("Testing equals is false when items are diff - ", shoppingList.equals(compList));
+        shoppingList = null;
+        compList = null;
+
+    }
+
+    @Test
+    public void testHashCodeListsEqual(){
+        ShoppingList shoppingList = new ShoppingList(internalName);
+        shoppingList.addList(internalShoppingList);
+
+        //Set up ShoppingList to check against
+        ShoppingList compList = new ShoppingList(internalName);
+        compList.addList(internalShoppingList);
+
+        assertEquals("Testing hashCode when lists are equal - ",shoppingList.hashCode(), compList.hashCode());
+        shoppingList = null;
+        compList = null;
+    }
+
+    @Test
+    public void testHashCodeListsNameDiff(){
+        ShoppingList shoppingList = new ShoppingList(internalName);
+        shoppingList.addList(internalShoppingList);
+
+        //Set up ShoppingList to check against
+        ShoppingList compList = new ShoppingList(internalName + "-TEST");
+        compList.addList(internalShoppingList);
+
+        assertFalse("Testing hashCode when lists are equal but name is not - ",shoppingList.hashCode() == compList.hashCode());
+        shoppingList = null;
+        compList = null;
+    }
+
+    @Test
+    public void testHashCodeListsDiff(){
+        ShoppingList shoppingList = new ShoppingList(internalName);
+        shoppingList.addList(internalShoppingList);
+
+        //Set up ShoppingList to check against
+        ShoppingList compList = new ShoppingList(internalName);
+        compList.addList(testShoppingList);
+
+        assertFalse("Testing hashCode when names are equal but lists are not - ",shoppingList.hashCode() == compList.hashCode());
+        shoppingList = null;
+        compList = null;
+    }
+
+    @Test
+    public void testHashCodeListDiffOrder(){
+        ShoppingList shoppingList = new ShoppingList(internalName);
+        shoppingList.addItem(lettuceListed);
+        shoppingList.addItem(breadListed);
+        shoppingList.addItem(yogurtListed);
+
+        //Set up ShoppingList to check against
+        ShoppingList compList = new ShoppingList(internalName);
+        compList.addItem(breadListed);
+        compList.addItem(yogurtListed);
+        compList.addItem(lettuceListed);
+
+        assertEquals("Testing hashCode when lists are equal but in diff order - ",shoppingList.hashCode(), compList.hashCode());
+        shoppingList = null;
+        compList = null;
+    }
+
+
+    @Test
+    public void testHashCodeListSameSizeDiffItems(){
+        ShoppingList shoppingList = new ShoppingList(internalName);
+        shoppingList.addItem(lettuceListed);
+        shoppingList.addItem(breadListed);
+        shoppingList.addItem(yogurtListed);
+
+        //Set up ShoppingList to check against
+        ShoppingList compList = new ShoppingList(internalName);
+        compList.addItem(breadListed);
+        compList.addItem(ryeWhiskeyListed);
+        compList.addItem(lettuceListed);
+
+        assertFalse("Testing hashCode when lists are equal size but in diff items - ",shoppingList.hashCode() == compList.hashCode());
+        shoppingList = null;
+        compList = null;
+    }
+
 }

@@ -2,6 +2,7 @@ package bananas;
 
 /**
  * Created by Jen on 6/9/2014.
+ * ListItem is a FoodItem that is on a ShoppingList.  Unlike FoodItem, ListItem has quantity, price, and unit attributes.
  */
 public class ListItem extends Item {
 
@@ -13,9 +14,9 @@ public class ListItem extends Item {
     private FoodItem foodItem;
 
     /*
-    This class uses the builder method in place of a constructor.  This is to
-    make it easier to create an object when using one of several parameter
-    combinations.
+    ListItem uses the builder method in place of a constructor with
+    CreateListItem as the inner class.  This is to make it easier to create an
+    object when using one of several parameter combinations.
 
     The required parameter is FoodItem- a ListItem is a FoodItem with additional
     attributes.  Optional parameters are name, quantity, category, unit, and
@@ -118,4 +119,5 @@ public class ListItem extends Item {
     public String getCategory() {
         return category;
     }
+
 }

@@ -34,9 +34,7 @@ public class FoodItem extends Item {
     public String getCategory() {
         return category;
     }
-    /* Author: Bryan Thetford
-     * Date: 6/23/14
-  */
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -46,19 +44,21 @@ public class FoodItem extends Item {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
-
-    /* Author: Bryan Thetford
-     * Date: 6/23/14
-  */
+	
 	   @Override
 	    public boolean equals(Object item){
+		   //if same object
 		   if(this == item)
 			   return true;
+		   //if arg null
 		   if(item == null)
 			   return false;
+		   //if not a foodItem
 		   if(!(item instanceof FoodItem))
 	    		return false;
+		   //cast item to food item
 		   FoodItem itemToCompare = (FoodItem) item;
+		   //call foodItem equals
 		   if(name.equals(itemToCompare.name) && category.equals(itemToCompare.category))
 			   return true;
 		   else

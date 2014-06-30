@@ -112,9 +112,7 @@ public class ListItem extends Item {
     public FoodItem getFoodItem(){
     	return foodItem;
     }
-    /* Author: Bryan Thetford
-     * Date: 6/23/14
-  */
+
     @Override
     public boolean equals(Object obj){
     	if(this == obj)
@@ -126,7 +124,7 @@ public class ListItem extends Item {
     		return false;
     	//cast obj to ListItem
     	ListItem li = (ListItem)obj;
-    	//if any fields are not equal return true
+    	//if not equal, for all fields, return false
     	if(!(foodItem.equals(li.foodItem)))
     		return false;
     	if(!(name.equals(li.name)))
@@ -142,9 +140,7 @@ public class ListItem extends Item {
     	//else
     	return true;
     }   
-    /* Author: Bryan Thetford
-     * Date: 6/23/14
-  */
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

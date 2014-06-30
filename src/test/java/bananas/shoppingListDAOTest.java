@@ -1,4 +1,4 @@
-package bananas;
+package test.java.bananas;
 /**
  * Created by Bryan on 6/7/2014.
  **/
@@ -12,297 +12,153 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import main.java.bananas.DAOUtils;
+import main.java.bananas.DBConnector;
+import main.java.bananas.FoodItem;
+import main.java.bananas.ListItem;
+import main.java.bananas.ListOfItems;
+import main.java.bananas.ShoppingList;
+import main.java.bananas.ShoppingListDAO;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
+
 public class shoppingListDAOTest {
+	//Create seperate class to close all data connections
+		private Connection con;
+		private ResultSet rs;
+		private PreparedStatement ps;
+		private ShoppingListDAO dao;
+		private Statement st;
+		private String testTable = "WalMart";
+		private ListOfItems li;
+		private ListOfItems testAgainstList;
+		private ListItem item3;
+		
+		@Before
+		public void init(){
+			con = DBConnector.getConnection(con);
+			dao = new ShoppingListDAO();
+			//create shoppingList objects to test saveList method
+			//Set up a shoppingList to test
+			li = new ShoppingList(testTable);
+			testAgainstList = new ShoppingList("WalMart");
+			
+			//create list items
+			FoodItem foodItem = new FoodItem("Bacon");
+			foodItem.setCategory("meat");
+			ListItem item = new ListItem.CreateListItem(foodItem).quantity(1.0).unit("Unit").price(1.25).create();
+			item.setCategory("meat");
+			item.setName("Bacon");
+			
+			FoodItem foodItem2 = new FoodItem("Bread");
+			foodItem2.setCategory("baked goods");
+			ListItem item2 = new ListItem.CreateListItem(foodItem2).quantity(1.0).unit("Unit").price(2.50).create();
+			item2.setCategory("baked goods");
+			item2.setName("Bread");
+			//create third item to test adding an item to a list (item only to be added to li
+			
+			FoodItem foodItem3 = new FoodItem("Cheese");
+			foodItem3.setCategory("category");
+			item3 = new ListItem.CreateListItem(foodItem3).quantity(1.0).unit("Unit").price(2.00).create();
+			item3.setCategory("category");
+			item3.setName("Cheese");
 
-	private Connection con;
-	private ResultSet rs;
-	private PreparedStatement ps;
-	private ShoppingListDAO dao;
-	private Statement st;
-	
-	
-	@Test
-	public void testCreateTables(){
-		/*****************************Arrange********************************/
-		//create table 
-		con = DBConnector.getConnection(con);
-		dao = new ShoppingListDAO();
-		String t = "TestTable";
-		String query = "SELECT * FROM ShoppingListNames";
-		String namesTableIsCreated = null;
-		Boolean isTable = null;
-		ResultSet rs2;
-		dao.createShoppingListTable(t);
-		
-
-		try {
-			ps = con.prepareStatement("INSERT INTO TestTable VALUES('Bacon', 1, 1.25, 'Unit', 'Food')");
-			ps.execute();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		/*****************************Act********************************/		
-		try {
-			DatabaseMetaData metadata = con.getMetaData();
-			rs = metadata.getTables(null, null, "TESTTABLE", null);
-			isTable = rs.next();
-			st = con.createStatement();
-			rs2 = st.executeQuery(query);
-			rs2.next();
-			namesTableIsCreated = rs2.getString(1);
 			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			//add the two items in DIFFERENT ORDER
+			li.addItem(item);
+			li.addItem(item2);
+			testAgainstList.addItem(item2);
+			testAgainstList.addItem(item);
 		
-		/*****************************Assert********************************/
-		assertTrue(isTable);
-		assertEquals(t, namesTableIsCreated);
-		try {
-			ps = con.prepareStatement("DROP TABLE " + t);
-			ps.execute();
-			ps = con.prepareStatement("Drop TABLE ShoppinListNames");
-			//close the connection
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-	}
-
-	
-	@Test 
-	public void testSaveListOfItems(){
-		/*****************************Arrange********************************/
-		con = DBConnector.getConnection(con);
-		dao = new ShoppingListDAO();
-		Boolean areEqual = null;
-		ShoppingList li = new ShoppingList("WalMart");
-		li.setName("WalMart");
-		
-		//create list items
-		FoodItem foodItem = new FoodItem("Bacon");
-		foodItem.setCategory("Category");
-		ListItem item = new ListItem.CreateListItem(foodItem).quantity(1.0).unit("Unit").price(1.25).create();
-		item.setCategory("Category");
-		item.setName("Bacon");
-		li.addItem(item);
-		
-		FoodItem foodItem2 = new FoodItem("Bread");
-		foodItem2.setCategory("Category");
-		ListItem item2 = new ListItem.CreateListItem(foodItem2).quantity(1.0).unit("Unit").price(2.50).create();
-		item2.setCategory("Category");
-		item2.setName("Bread");
-		li.addItem(item2);
-
-		
-		/*****************************Act************************************/	
-		dao.saveListOfItems(li);
-		
-		//create new list to test against
-		ShoppingList liTest = new ShoppingList("ListTest");
-		//set test list to equal the saved list
-		liTest = dao.getListOfItems("WalMart");
-		//get the items from the saved list
-		item = liTest.getItem("Bacon");
-		item2 = liTest.getItem("Bread");
-		
-		//recreate the items saved to compare against
-		String name = liTest.getList().get(0).getName();
-		String unit = liTest.getList().get(0).getUnit();
-		String cat = liTest.getList().get(0).getCategory();
-		Double qty = liTest.getList().get(0).getQuantity();
-		Double price = liTest.getList().get(0).getPrice();
-		
-		String name2 = liTest.getList().get(1).getName();
-		String unit2 = liTest.getList().get(1).getUnit();
-		String cat2 = liTest.getList().get(1).getCategory();
-		Double qty2 = liTest.getList().get(1).getQuantity();
-		Double price2 = liTest.getList().get(1).getPrice();
-		
-		if(name.equals("Bacon") && qty.equals(1.0) && price.equals(1.25) && unit.equals("Unit") 
-		  && cat.equals("Category") && name2.equals("Bread") && qty2.equals(1.0) && price2.equals(2.50)
-		  && unit2.equals("Unit") && cat2.equals("Category"))
-			areEqual = true;
-		else
-			areEqual = false;
-		/*****************************Assert*********************************/
-		
-		assertTrue(areEqual);
-		//*****************************Clean up*****************************/
-		try {
-			//drop test table
-			ps = con.prepareStatement("DROP TABLE " + li.getName());
-			ps.execute();
-			//close the connection
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
-	@Test
-	public void testGetListOfItems(){
-		/*****************************Arrange********************************/
-		con = DBConnector.getConnection(con);
-		dao = new ShoppingListDAO();
-		String t = "testGetList";
-		String query1 = "INSERT INTO " + t + " VALUES('Bacon', 1.0, 1.25, 'Unit', 'Category')";
-		String query2 = "INSERT INTO " + t + " VALUES('Bread', 1.0, 2.50, 'Unit', 'Category')";
-		Boolean areEqual = null;
-
-		ShoppingList loi;
-		
-		
-		loi = new ShoppingList(t);
-		
-		//create a table
-		dao.createShoppingListTable(t);
-		try {
-			ps = con.prepareStatement(query1);
-			ps.execute();
-			ps = con.prepareStatement(query2);
-			ps.execute();
-		/*****************************Act************************************/
-			loi = dao.getListOfItems(t);
-			
-			String tname = loi.getList().get(0).getName();
-			Double tqty = loi.getList().get(0).getQuantity();
-			Double tprice = loi.getList().get(0).getPrice();
-			String tunit = loi.getList().get(0).getUnit();
-			String tcat = loi.getList().get(0).getCategory();
-			
-			String tname2 = loi.getList().get(1).getName();
-			Double tqty2 = loi.getList().get(1).getQuantity();
-			Double tprice2 = loi.getList().get(1).getPrice();
-			String tunit2 = loi.getList().get(1).getUnit();
-			String tcat2 = loi.getList().get(1).getCategory();
-			
-			if(tname.equals("Bacon") && tqty.equals(1.0) && tprice.equals(1.25) && tunit.equals("Unit") 
-			   && tcat.equals("Category") && tname2.equals("Bread") && tqty2.equals(1.0) && tprice2.equals(2.50)
-			   && tunit2.equals("Unit") && tcat2.equals("Category"))
-				areEqual = true;
-			else
-				areEqual = false;
-			
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
-		/*****************************Assert*********************************/
+		@Test
+		public void testCreateTables(){
+			/*****************************Arrange********************************/
+			//Statement to test if table exists
+			String query = "SELECT * FROM ShoppingListNames";
+			String namesTableIsCreated = null;
+			//result set to hold return of query
+			ResultSet rs2;
+			//create the table named "WalMart"
+			dao.createShoppingListTable(testTable);
+			
+			Boolean isTable = null;
+			/*****************************Act********************************/		
+			try {
+				DatabaseMetaData metadata = con.getMetaData();
+				rs = metadata.getTables(null, null, "WALMART", null);
+				//is isTable true, the table for shopping list object, WalMart, was created
+				isTable = rs.next();
+				st = con.createStatement();
+				rs2 = st.executeQuery(query);
+				rs2.next();
+				//Table to hold first value in the table of shopping list names
+				namesTableIsCreated = rs2.getString(1);
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			/*****************************Assert********************************/
+			assertTrue(isTable);
+			//Assert that the Test Tables's name was entered into the table for shoppinglist names
+			assertEquals(testTable, namesTableIsCreated);
+		}
+
 		
-		assertTrue(areEqual);
-		/****************************Clean up********************************/
-		try {
-			ps = con.prepareStatement("DROP TABLE " + t);
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		@Test 
+		public void testSaveListOfItems(){
+			dao.saveListOfItems(li);
+			ListOfItems liTest = dao.getListOfItems(testTable);
+			Boolean isSame = li.equals(liTest);
+			Boolean isSameOutOfOrder = li.equals(testAgainstList);
+			assertTrue(isSameOutOfOrder);
+			assertTrue(isSame);		
+		}
+			
+		
+		@Test
+		public void testGetListOfItems(){
+			dao.saveListOfItems(li);
+			ListOfItems loi = dao.getListOfItems(testTable);
+			Boolean isSame = li.equals(loi);
+			assertTrue(isSame);
+		}
+		
+		@Test
+		public void testAddItemToList(){
+			dao.saveListOfItems(li);
+			dao.addItemToList(item3, testTable);
+			ListOfItems loi = dao.getListOfItems(testTable);
+			Boolean isAdded = item3.equals(loi.getList().get(2));
+			assertTrue(isAdded);	
+		}
+		
+		@After
+		public void tearDown(){
+			try {
+				//this throws an exception from the deleteList test because the table has already been deleted
+				//needs to be moved to another test case
+				con = DBConnector.getConnection(con);
+				ps = con.prepareStatement("DROP TABLE " + testTable);
+				ps.execute();
+				ps = con.prepareStatement("DROP TABLE ShoppingListNames");
+				ps.execute();
+
+
+				//close the connection
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			finally{
+				DAOUtils.closePrepared(ps);
+				DAOUtils.closeConn(con);
+			}
 		}
 	}
-	
-	@Test
-	public void testAddItemToList(){
-		/*****************************Arrange********************************/	
-		con = DBConnector.getConnection(con);
-		dao = new ShoppingListDAO();
-		String list = "TestList";
-		Boolean areEqual = null;
-		FoodItem food = new FoodItem("Cheese", "Perishables");
-		ListItem item = new ListItem.CreateListItem(food).quantity(1.0).unit("Unit").price(2.00).create();
-		item.setCategory(food.getCategory());
-		
-		dao.createShoppingListTable(list);
-		
-		/*****************************Act************************************/
-		dao.addItemToList(item, list);
-		ShoppingList sList= new ShoppingList(list);
-		sList = dao.getListOfItems(list);
-		List<ListItem> loi = sList.getList();
-		String name = loi.get(0).getName();
-		String unit = loi.get(0).getUnit();
-		String cat = loi.get(0).getCategory();
-		Double price = loi.get(0).getPrice();
-		Double qty = loi.get(0).getQuantity();
-		
-		if(name.equals("Cheese") && qty.equals(1.0) && price.equals(2.00) && unit.equals("Unit") 
-				   && cat.equals("Perishables"))
-			areEqual = true;
-		else
-			areEqual = false;
-		
-		/*****************************Assert*********************************/
-		assertTrue(areEqual);
-		
-		/**************************clean up**********************************/
-		try {
-			ps = con.prepareStatement("DROP TABLE " + list);
-			ps.execute();
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
-	@Test
-	public void testUpdateList(){
-		/*****************************Arrange********************************/		
-		/*****************************Act************************************/		
-		/*****************************Assert*********************************/
-	}
-	
-	@Test
-	public void testDeleteList(){
-		/*****************************Arrange********************************/	
-		//create table 
-		con = DBConnector.getConnection(con);
-		dao = new ShoppingListDAO();
-		String t = "TestTable";
-		Boolean isTable = null;
-		dao.createShoppingListTable(t);
-
-		try {
-			ps = con.prepareStatement("INSERT INTO TestTable VALUES('Bacon', 1, 1.25, 'Unit', 'Food')");
-			ps.execute();
-
-			
-			/*****************************Act********************************/
-			dao.deleteList(t);
-			DatabaseMetaData metadata = con.getMetaData();
-			rs = metadata.getTables(null, null, "TESTTABLE", null);
-			//st = con.createStatement();
-			//rs = st.executeQuery(query);
-			isTable = rs.next();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-
-		/*****************************Assert********************************/
-		assertFalse(isTable);
-		try {
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
-
-}

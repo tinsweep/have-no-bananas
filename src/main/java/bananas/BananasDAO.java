@@ -1,8 +1,7 @@
-package bananas;
+package main.java.bananas;
 /**
  * Created by Bryan on 6/18/2014.
  **/
-import java.util.List;
 
 public interface BananasDAO {
 	public void createShoppingListTable(String listName);

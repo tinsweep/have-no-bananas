@@ -39,7 +39,7 @@ public class shoppingListDAOTest {
 		
 		@Before
 		public void init(){
-			con = DBConnector.getConnection(con);
+			con = DAOUtils.getConnection(con);
 			dao = new ShoppingListDAO();
 			//create shoppingList objects to test saveList method
 			//Set up a shoppingList to test
@@ -138,6 +138,7 @@ public class shoppingListDAOTest {
 			Boolean isAdded = item3.equals(loi.getList().get(2));
 			assertTrue(isAdded);	
 		}
+		
 		
 		@After
 		public void tearDown(){

@@ -86,6 +86,9 @@
 
     </target>
 
+    <!-- please add an ANT run task -->
+
+    <!-- please add code coverage report -->
 
     <!-- this is the default target - it does everything -->
     <target name="all" depends="info, init, clean, compile, test"

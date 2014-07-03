@@ -12,39 +12,48 @@ public class FoodItemDAO {
 	private ResultSet rs;
 	private Statement st;
 	private PreparedStatement ps;
+	String insert = "INSERT INTO FoodItems VALUES(?, ?, ?)";
 	private Logger logger = Logger.getLogger("Have No Bananas Log");
 	
 	public void createFoodItemTable(){
 		try {
-			ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS FoodItems "
-					+ "(Item_Name VARCHAR(50), List_Name VARCHAR(50), ItemCount INT SET DEFAULT 1");
+			con = DAOUtils.getConnection(con);
+			ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS foodItems (ItemName VARCHAR(50) NOT NULL, "
+					+ "ListName VARCHAR(50), "
+					+ "ItemCount INT DEFAULT 0, "
+					+ "PRIMARY KEY (ItemName))");
 			ps.execute();
 		} catch (SQLException e) {
-			throw new DAOException(e.getMessage());
+			e.printStackTrace();
+			throw new DAOException("There was a problem creating the food items table", e);
+		}finally{
 		}
 	}
 	public void saveFoodItem(FoodItem item, String listName){
 		try {
-			String query = "SELECT * FROM FoodItems WHERE ItemName = " + item.getName();
-			String insert = "INSERT INTO FoodItems VALUES(?, ?, ?)";
-			st = con.createStatement();
-			rs = st.executeQuery(query);
-			if(rs.next()){
-				ps = con.prepareStatement(insert);
-				ps.setString(1, item.getName());
-				ps.setString(2, listName);
-				ps.setInt(3, rs.getInt(3) + 1);
-				ps.execute();
-			}else{
-				ps = con.prepareStatement(insert);
-				ps.setString(1, item.getName());
-				ps.setString(2, listName);
-				ps.execute();
-			}
-				
+			con = DAOUtils.getConnection(con);
 
+			createFoodItemTable();			
+			
+			ps = con.prepareStatement("INSERT INTO foodItems VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE ItemCount = ItemCount + 1");
+			ps.setString(1, item.getName());
+			ps.setString(2, listName);
+			ps.setInt(3, 1);
+			//ps.setString(4, listName);
+			//ps.setString(5, "ItemCount = ItemCount + 1");
+					
+			//HERE IS THE PROBLEM, ITEM COUNT IS RESETTING TO ZERO ON MERGE
+			//ps.setInt(3, 1);
+			ps.execute();
+			//
+			//ps = con.prepareStatement("UPDATE foodItems SET ItemCount = ItemCount + 1 WHERE ItemName = ?");
+			//ps.setString(1, item.getName());
+			//ps.executeUpdate();
+				
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new DAOException(e.getMessage());			
+		}finally{
 		}
 	}
 

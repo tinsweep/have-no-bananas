@@ -26,7 +26,6 @@ import org.junit.Test;
 
 
 public class shoppingListDAOTest {
-	//Create seperate class to close all data connections
 		private Connection con;
 		private ResultSet rs;
 		private PreparedStatement ps;
@@ -39,7 +38,9 @@ public class shoppingListDAOTest {
 		
 		@Before
 		public void init(){
+			//open database connection
 			con = DAOUtils.getConnection(con);
+			//instantiate shoppingList Data Access Object
 			dao = new ShoppingListDAO();
 			//create shoppingList objects to test saveList method
 			//Set up a shoppingList to test
@@ -77,7 +78,6 @@ public class shoppingListDAOTest {
 
 		@Test
 		public void testCreateTables(){
-			/*****************************Arrange********************************/
 			//Statement to test if table exists
 			String query = "SELECT * FROM ShoppingListNames";
 			String namesTableIsCreated = null;
@@ -91,12 +91,13 @@ public class shoppingListDAOTest {
 			try {
 				DatabaseMetaData metadata = con.getMetaData();
 				rs = metadata.getTables(null, null, "WALMART", null);
-				//is isTable true, the table for shopping list object, WalMart, was created
+				//if isTable true, the table for shopping list object, WalMart, was created
 				isTable = rs.next();
 				st = con.createStatement();
+				//select all from ShoppingListNames
 				rs2 = st.executeQuery(query);
 				rs2.next();
-				//Table to hold first value in the table of shopping list names
+				//set namesTableIsCreated to first value in second result set
 				namesTableIsCreated = rs2.getString(1);
 				
 			} catch (SQLException e) {
@@ -145,7 +146,7 @@ public class shoppingListDAOTest {
 			try {
 				//this throws an exception from the deleteList test because the table has already been deleted
 				//needs to be moved to another test case
-				con = DBConnector.getConnection(con);
+				con = DAOUtils.getConnection(con);
 				ps = con.prepareStatement("DROP TABLE " + testTable);
 				ps.execute();
 				ps = con.prepareStatement("DROP TABLE ShoppingListNames");

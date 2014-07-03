@@ -17,14 +17,13 @@ import java.util.logging.Logger;
 
 public class ShoppingListDAO implements BananasDAO {
 	private Connection con;
-	private Connection conSave;
 	private ResultSet rs;
 	private Statement st;
 	private PreparedStatement ps;
 	private Logger logger = Logger.getLogger("Have No Bananas Log");
 	
 	private void createShoppingListNamesTable(String listName)throws DAOException{
-		con = DBConnector.getConnection(con);
+		con = DAOUtils.getConnection(con);
 		try {
 			String table = "ShoppingListNames";
 			ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS " + table + "(ListName VARCHAR(50))");
@@ -41,7 +40,7 @@ public class ShoppingListDAO implements BananasDAO {
 	@Override 
 	public void createShoppingListTable(String listName) throws DAOException{
 		//open connection
-		con = DBConnector.getConnection(con);
+		con = DAOUtils.getConnection(con);
 		//create a table to hold the names of all shopping lists
 		if(!(listName instanceof String))
 			throw new DAOException("Shopping list must be named with a word");
@@ -62,7 +61,7 @@ public class ShoppingListDAO implements BananasDAO {
 	@Override
 	public void saveListOfItems(ListOfItems listToSave) throws DAOException{
 		//open connection
-		con = DBConnector.getConnection(con);
+		con = DAOUtils.getConnection(con);
 		//create a table by the name of list if it doesn't already exist
 		//the name of the list will be added to a table holding a name of all lists
 		createShoppingListTable(listToSave.getName());
@@ -103,7 +102,7 @@ public class ShoppingListDAO implements BananasDAO {
 	@Override
 	public ListOfItems getListOfItems(String listName) throws DAOException{	// gets a shopping list from the database
 		//open a connection
-		con = DBConnector.getConnection(con);
+		con = DAOUtils.getConnection(con);
 		//create a new shopping list to copy values to and return
 		ListOfItems result = new ShoppingList(listName);
 		ListItem item;
@@ -145,15 +144,15 @@ public class ShoppingListDAO implements BananasDAO {
 	@Override
 	public void addItemToList(ListItem itemToAdd, String listName) throws DAOException{
 		//add a food item to a list with the given name
-		con = DBConnector.getConnection(con);
+		con = DAOUtils.getConnection(con);
 		//deconstruct the item passed and insert it into the table specified
 		try {
 			ps = con.prepareStatement("INSERT INTO " + listName + " (Name, Quantity, Price, Unit, Category) VALUES(?, ? , ? , ? , ?)");
-			ps.setString(1, itemToAdd.getFoodItem().getName() );
+			ps.setString(1, itemToAdd.getName() );
 			ps.setDouble(2, itemToAdd.getQuantity() );
 			ps.setDouble(3, itemToAdd.getPrice() );
 			ps.setString(4, itemToAdd.getUnit());
-			ps.setString(5, itemToAdd.getFoodItem().getCategory());
+			ps.setString(5, itemToAdd.getCategory());
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
@@ -172,8 +171,9 @@ public class ShoppingListDAO implements BananasDAO {
 			//delete the specified table from the database
 			ps = con.prepareStatement("DROP TABLE " + listName);
 			ps.execute();
-			ps = con.prepareStatement("DELETE FROM ShoppingListNames WHERE ListName = 'WalMart'");
-			ps.execute();			
+			ps = con.prepareStatement("DELETE FROM ShoppingListNames WHERE ListName = ?");
+			ps.setString(1, listName);
+			ps.executeUpdate();			
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		}finally{

@@ -52,30 +52,35 @@ public class ShoppingListDAO_TestDelete {
 			isTable = rs.next();
 			assertFalse(isTable);	
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			logger.log(Level.WARNING, "There was a problem deleting the shopping list from the database." + e1.getErrorCode() + e1.getMessage() );
+			System.out.println("There was a problem deleteing the shopping list from the database." + e1.getMessage() + e1.getSQLState() + e1.getSQLState());
+
 		}finally{
 			DAOUtils.closeResultSet(rs);
 		}
 	}
 	@Test
 	public void test_That_DeleteList_Drops_Table_Name_from_ShoppingListNames(){
+		
 		dao.deleteList(testTable);
+		Integer numRows = null;
 		try{
-			String query = "SELECT * FROM ShoppingListNames";
+			String query = "SELECT COUNT(*) FROM ShoppingListNames";
 			st = con.createStatement();
 			rs = st.executeQuery(query);
 			rs.next();
-			String tableName = rs.getString(1);
-			System.out.println(tableName);
-			assertFalse(tableName == "WalMart");
+			//number of rows
+			numRows = rs.getInt(1);
+			
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			logger.log(Level.WARNING, "There was a problem Dropping from the shopping list names table." + e1.getErrorCode() + e1.getMessage() );
-			System.out.println("There was a problem Dropping from the shopping list names table." + e1.getMessage() + e1.getSQLState() + e1.getSQLState());
+			logger.log(Level.WARNING, "There was a problem deleting from the shopping list names table." + e1.getErrorCode() + e1.getMessage() );
+			System.out.println("There was a problem deleting from the shopping list names table." + e1.getMessage() + e1.getSQLState() + e1.getSQLState());
 		}finally{
 		DAOUtils.closeResultSet(rs);
 		DAOUtils.closeStatement(st);
 		}
+		assertTrue(numRows == 0);
 	}
 }

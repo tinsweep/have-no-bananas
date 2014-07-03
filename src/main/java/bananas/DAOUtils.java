@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class DAOUtils {
 	private static Logger logger = Logger.getLogger("Have No Bananas Log");
-	private static final String URL = "jdbc:h2:~/bananas/ShoppingLists";
+	private static final String URL = "jdbc:h2:~/bananas/ShoppingLists;MODE=MySQL";
 	
 	public DAOUtils(){
 		
@@ -24,7 +24,7 @@ public class DAOUtils {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			logger.log(Level.WARNING, "There was a problem closing the connection.");
-			throw new DAOException(e.getMessage());
+			throw new DAOException("There was a problem closing the connection.", e);
 		}
 	}
 	
@@ -33,7 +33,7 @@ public class DAOUtils {
 			ps.close();
 		} catch (SQLException e) {
 			logger.log(Level.WARNING, "There was a problem closing the Prepared Statement." + e.getMessage());
-			throw new DAOException(e.getMessage());
+			throw new DAOException("There was a problem closing the connection.", e);
 		}
 	}
 	
@@ -42,7 +42,7 @@ public class DAOUtils {
 			st.close();
 		} catch (SQLException e) {
 			logger.log(Level.WARNING, "There was a problem closing the Statement.");
-			throw new DAOException(e.getMessage());
+			throw new DAOException("There was a problem closing the connection.", e);
 		}
 	}
 	
@@ -51,16 +51,16 @@ public class DAOUtils {
 			rs.close();
 		} catch (SQLException e) {
 			logger.log(Level.WARNING, "There was a problem closing the Result Set.");
-			throw new DAOException(e.getMessage());
+			throw new DAOException("There was a problem closing the connection.", e);
 		}
 	}
-	public static Connection getConnection(Connection conn){
+	public static Connection getConnection(Connection con){
 		try{
-			conn = DriverManager.getConnection(URL);
+			con = DriverManager.getConnection(URL);
 		}catch(SQLException e){
-			logger.log(Level.WARNING, "There was a problem connectiong to the DataBase.");
-			throw new DAOException(e.getMessage());		}
-		return conn;
+			logger.log(Level.WARNING, "There was a problem connecting to the Database.");
+			throw new DAOException("There was a problem connecting to the Database.", e);		}
+		return con;
 		
 	}
 	

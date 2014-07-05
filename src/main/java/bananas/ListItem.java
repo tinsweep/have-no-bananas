@@ -1,7 +1,8 @@
-package main.java.bananas;
+package bananas;
 
 /**
  * Created by Jen on 6/9/2014.
+ * ListItem is a FoodItem that is on a ShoppingList.  Unlike FoodItem, ListItem has quantity, price, and unit attributes.
  */
 public class ListItem extends Item {
 
@@ -12,6 +13,22 @@ public class ListItem extends Item {
     private Double price;
     private FoodItem foodItem;
 
+    /*
+    ListItem uses the builder method in place of a constructor with
+    CreateListItem as the inner class.  This is to make it easier to create an
+    object when using one of several parameter combinations.
+
+    The required parameter is FoodItem- a ListItem is a FoodItem with additional
+    attributes.  Optional parameters are name, quantity, category, unit, and
+    price.  All numeric parameters are Double.
+
+    To create a ListItem object, use the following syntax:
+
+    ListItem listItem = new ListItem.CreateListItem(foodItem).quantity(qty).unit(itemUnit).price(itemPrice).create();
+
+    You can leave out parameters you don't need or don't have, but you must
+    begin the declaration with "ListItem.CreateListItem(FoodItem)" and end the statement with ".create();".
+     */
     public static class CreateListItem {
 
         //Required parameter
@@ -28,8 +45,8 @@ public class ListItem extends Item {
             foodItem = val;
         }
 
-        public CreateListItem name(String val){
-            name = val;
+        public CreateListItem name(){
+            name = foodItem.getName();
             return this;
         }
 
@@ -70,10 +87,6 @@ public class ListItem extends Item {
     public String getName() {
         return foodItem.getName();
     }
-    
-    public void setName(String name){
-    	this.name = name;
-    }
 
     public void setQuantity(Double q) {
         quantity = q;
@@ -107,53 +120,4 @@ public class ListItem extends Item {
         return category;
     }
 
-    
-
-    public FoodItem getFoodItem(){
-    	return foodItem;
-    }
-
-    @Override
-    public boolean equals(Object obj){
-    	if(this == obj)
-    		return true;
-    	//if arg obj is null return false
-    	if(obj == null)
-    		return false;
-    	if(!(obj instanceof ListItem))
-    		return false;
-    	//cast obj to ListItem
-    	ListItem li = (ListItem)obj;
-    	//if not equal, for all fields, return false
-    	if(!(foodItem.equals(li.foodItem)))
-    		return false;
-    	if(!(name.equals(li.name)))
-    		return false;
-    	if(!(price.equals(li.price)))
-    		return false;
-    	if(!(quantity.equals(li.quantity)))
-    		return false;
-    	if(!(unit.equals(li.unit)))
-    		return false;
-    	if(!(category.equals(li.category)))
-    		return false;
-    	//else
-    	return true;
-    }   
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((category == null) ? 0 : category.hashCode());
-		result = prime * result
-				+ ((foodItem == null) ? 0 : foodItem.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((price == null) ? 0 : price.hashCode());
-		result = prime * result
-				+ ((quantity == null) ? 0 : quantity.hashCode());
-		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
-		return result;
-	}
 }

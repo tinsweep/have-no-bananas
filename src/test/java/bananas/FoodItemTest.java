@@ -1,7 +1,10 @@
-package bananas;
+package test.java.bananas;
+
+import main.java.bananas.FoodItem;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;

@@ -2,19 +2,16 @@ package main.java.bananas;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Logger;
 
 public class FoodItemDAO {
 	private Connection con;
-	private ResultSet rs;
-	private Statement st;
 	private PreparedStatement ps;
 	String insert = "INSERT INTO FoodItems VALUES(?, ?, ?)";
-	private Logger logger = Logger.getLogger("Have No Bananas Log");
 	
+	/**
+	 * Creates the table to hold food items added to a list
+	 */
 	public void createFoodItemTable(){
 		try {
 			con = DAOUtils.getConnection(con);
@@ -24,11 +21,14 @@ public class FoodItemDAO {
 					+ "PRIMARY KEY (ItemName))");
 			ps.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
 			throw new DAOException("There was a problem creating the food items table", e);
 		}finally{
 		}
 	}
+	/*
+	 * Calls the create table method, then adds the food item to the list
+	 * If the item is already on the list the counter is incremented by one
+	 * */
 	public void saveFoodItem(FoodItem item, String listName){
 		try {
 			con = DAOUtils.getConnection(con);
@@ -39,20 +39,9 @@ public class FoodItemDAO {
 			ps.setString(1, item.getName());
 			ps.setString(2, listName);
 			ps.setInt(3, 1);
-			//ps.setString(4, listName);
-			//ps.setString(5, "ItemCount = ItemCount + 1");
-					
-			//HERE IS THE PROBLEM, ITEM COUNT IS RESETTING TO ZERO ON MERGE
-			//ps.setInt(3, 1);
 			ps.execute();
-			//
-			//ps = con.prepareStatement("UPDATE foodItems SET ItemCount = ItemCount + 1 WHERE ItemName = ?");
-			//ps.setString(1, item.getName());
-			//ps.executeUpdate();
-				
 		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new DAOException(e.getMessage());			
+			throw new DAOException("There was a problem saving the shoppping list.", e);			
 		}finally{
 		}
 	}

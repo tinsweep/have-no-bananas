@@ -89,10 +89,15 @@ public class BananaHome extends JFrame {
             }
         });
 
+        SetComponentNames();
         mainWindow.setVisible(true);
     }
 
+    private void SetComponentNames(){
+        mainWindow.setName("mainWindow");
+        mainPanel.setName("mainPanel");
 
+    }
     public static void main (String[] args) {
         new BananaHome();
     }

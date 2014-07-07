@@ -1,4 +1,4 @@
-package test.java.bananas;
+package bananas;
 
 import static org.junit.Assert.*;
 

@@ -1,4 +1,4 @@
-package main.java.bananas;
+package bananas;
 
 /**
  * Created by Bryan on 6/7/2014.

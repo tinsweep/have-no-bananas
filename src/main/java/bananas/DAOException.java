@@ -1,4 +1,4 @@
-package main.java.bananas;
+package bananas;
 
 public class DAOException extends RuntimeException{
 

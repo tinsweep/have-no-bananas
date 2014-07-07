@@ -1,4 +1,4 @@
-package main.java.bananas;
+package bananas;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

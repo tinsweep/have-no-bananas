@@ -1,4 +1,4 @@
-package test.java.bananas;
+package bananas;
 
 import main.java.bananas.FoodItem;
 

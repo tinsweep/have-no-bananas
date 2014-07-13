@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by Andy on 7/12/2014.
+ * GUI class to facilitate selecting or creating FoodItems
  */
 public class AddFoodWindow extends JFrame {
     //Private Variables
@@ -26,11 +26,6 @@ public class AddFoodWindow extends JFrame {
     private JTextField nameField, categoryField;
     private FoodItem food;
 
-    //Colors
-    private Color BANANA_COLOR = new Color(255, 255, 184);
-    private Color FONT_BROWN = new Color(61, 41, 30);
-    private Font TITLE_FONT = new Font("Cooper Black", Font.PLAIN, 18);
-
     public AddFoodWindow() {
 
         //Create JFrame
@@ -41,7 +36,7 @@ public class AddFoodWindow extends JFrame {
 
         //Create the main JPanel
         mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(BANANA_COLOR); //banana yellow
+        mainPanel.setBackground(GUIColors.getBANANA_COLOR()); //banana yellow
         mainWindow.getContentPane().add(mainPanel);
         c = new GridBagConstraints();
 
@@ -68,8 +63,8 @@ public class AddFoodWindow extends JFrame {
         c.gridx = 0;
         c.gridy = 0;
         c.insets = new Insets(10,10,10,10);
-        title.setFont(TITLE_FONT);
-        title.setForeground(FONT_BROWN);
+        title.setFont(GUIColors.getHEADING_FONT());
+        title.setForeground(GUIColors.getFONT_BROWN());
         mainPanel.add(title, c);
 
         //List of saved foods
@@ -103,8 +98,8 @@ public class AddFoodWindow extends JFrame {
         createItemHeading = new JLabel("Create a new item");
         c.gridx = 0;
         c.gridy = 3;
-        createItemHeading.setFont(TITLE_FONT);
-        createItemHeading.setForeground(FONT_BROWN);
+        createItemHeading.setFont(GUIColors.getHEADING_FONT());
+        createItemHeading.setForeground(GUIColors.getFONT_BROWN());
         mainPanel.add(createItemHeading, c);
 
         nameLabel = new JLabel("Item name:");

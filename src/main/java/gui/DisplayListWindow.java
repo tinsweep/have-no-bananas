@@ -10,12 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * A GUI class to display Lists of groceries
- *
- * Created by Andy on 6/14/2014.
+ * GUI class to display and modify items in a ShoppingList.
  */
-public class GroceriesWindow extends JFrame {
-
+public class DisplayListWindow {
     //Private Variables
     private JFrame mainWindow;
     private JPanel mainPanel;
@@ -26,12 +23,17 @@ public class GroceriesWindow extends JFrame {
     private JMenuBar menuBar;
     private JMenu menu;
     private JMenuItem closeMenuItem;
-    private JButton goButton, createListButton;
+    private JButton addItemButton, removeItemButton;
     private ShoppingList shoppingList;
+    private String listName;
 
-    public GroceriesWindow () {
+    public DisplayListWindow () {
+        //Get the list name
+        //Test
+        listName = "Test List";
+
         //Create the JFrame
-        mainWindow = new JFrame("Groceries Home");
+        mainWindow = new JFrame(listName);
         mainWindow.setSize(300,400);
         mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -59,7 +61,7 @@ public class GroceriesWindow extends JFrame {
         mainWindow.setJMenuBar(menuBar);
 
         //Window title
-        title = new JLabel("Your Grocery Lists");
+        title = new JLabel(listName);
         c.gridx = 0;
         c.gridy = 0;
         c.insets = new Insets(10,10,10,10);
@@ -78,33 +80,85 @@ public class GroceriesWindow extends JFrame {
         c.gridy = 1;
         mainPanel.add(groceriesList, c);
 
-        //"Go" button (select highlighted list item)
-        goButton = new JButton("Go");
+        //Add item button
+        addItemButton = new JButton("Add item");
         c.gridx = 0;
         c.gridy = 2;
-        mainPanel.add(goButton, c);
-        goButton.addActionListener(new ActionListener() {
+        mainPanel.add(addItemButton, c);
+        addItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                //open selected ShoppingList
-                //new DisplayListWindow(shoppingList);
-                mainWindow.setVisible(false);
+                new AddFoodWindow();
             }
         });
 
-        //create list button
-        createListButton = new JButton("Create list");
+        //Remove item button
+        removeItemButton = new JButton("Remove item");
         c.gridx = 0;
         c.gridy = 3;
-        mainPanel.add(createListButton, c);
-        createListButton.addActionListener(new ActionListener() {
+        mainPanel.add(removeItemButton, c);
+        removeItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                new CreateListWindow();
+                //Remove item from list
             }
         });
 
         //Show the window
         mainWindow.setVisible(true);
+    }
+
+    public JList<FoodItem> createJList() {
+        listModel = new DefaultListModel();
+        JList list = new JList(listModel);
+        groceriesList = new JList(listModel);
+        groceriesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        groceriesList.setLayoutOrientation(JList.VERTICAL);
+        JScrollPane listScroller = new JScrollPane(groceriesList);
+        listScroller.setPreferredSize(new Dimension(250, 80));
+
+        mainPanel.add(list);
+        mainPanel.repaint();
+
+        return list;
+    }
+    public JList<FoodItem> createJList(ShoppingList shoppingList) {
+        listModel = new DefaultListModel();
+        JList list = new JList(listModel);
+        groceriesList = new JList(listModel);
+        groceriesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        groceriesList.setLayoutOrientation(JList.VERTICAL);
+        JScrollPane listScroller = new JScrollPane(groceriesList);
+        listScroller.setPreferredSize(new Dimension(250, 80));
+
+        for (ListItem item : shoppingList.getList()) {
+            listModel.addElement(item);
+        }
+        mainPanel.add(list);
+        mainPanel.repaint();
+
+        return list;
+    }
+
+    public JList getGroceriesList() {
+        return groceriesList;
+    }
+
+    //Add items to the list
+    public void addItem(ListItem item) {
+        listModel.addElement(item);
+        mainPanel.repaint();
+    }
+
+    //Remove items from the list
+    public void removeItem(ListItem item) {
+        listModel.removeElement(item);
+    }
+
+    public static void main (String[] args) {
+        DisplayListWindow test;
+        test = new DisplayListWindow();
+
+
     }
 }

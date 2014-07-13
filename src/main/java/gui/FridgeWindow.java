@@ -36,6 +36,7 @@ public class FridgeWindow extends JFrame {
 
         //Create the main JPanel
         mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBackground(GUIColors.getBANANA_COLOR()); //banana yellow
         fridgeWindow.getContentPane().add(mainPanel);
         c = new GridBagConstraints();
 
@@ -61,6 +62,8 @@ public class FridgeWindow extends JFrame {
         c.gridx = 0;
         c.gridy = 0;
         c.insets = new Insets(10, 10, 10, 10);
+        title.setFont(GUIColors.getHEADING_FONT());
+        title.setForeground(GUIColors.getFONT_BROWN());
         mainPanel.add(title, c);
 
         //Groceries List

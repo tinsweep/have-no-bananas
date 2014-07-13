@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by Andy on 6/14/2014.
+ * Main GUI window of the application, used to access the ShoppingLists and Inventory
  */
 public class BananaHome extends JFrame {
 
@@ -20,12 +20,7 @@ public class BananaHome extends JFrame {
     private JLabel title;
     private JButton groceriesButton, fridgeButton;
 
-    //Colors
-    private Color BANANA_COLOR = new Color(255, 255, 184);
-    private Color FONT_BROWN = new Color(61, 41, 30);
-    private Font TITLE_FONT = new Font("Cooper Black", Font.BOLD, 36);
-
-    public BananaHome() {
+    public BananaHome(DataContainer dataContainer) {
 
         //Create JFrame
         mainWindow = new JFrame("...Have No Bananas");
@@ -35,7 +30,7 @@ public class BananaHome extends JFrame {
 
         //Create the main JPanel
         mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(BANANA_COLOR); //banana yellow
+        mainPanel.setBackground(GUIColors.getBANANA_COLOR()); //banana yellow
         mainWindow.getContentPane().add(mainPanel);
         c = new GridBagConstraints();
 
@@ -57,12 +52,12 @@ public class BananaHome extends JFrame {
         mainWindow.setJMenuBar(menuBar);
 
         //Window title
-        title = new JLabel("...have no bananas");
+        title = new JLabel("...Have no Bananas");
         c.gridx = 0;
         c.gridy = 0;
         c.insets = new Insets(10,10,10,10);
-        title.setFont(TITLE_FONT);
-        title.setForeground(FONT_BROWN);
+        title.setFont(GUIColors.getTITLE_FONT());
+        title.setForeground(GUIColors.getFONT_BROWN());
         mainPanel.add(title, c);
 
         //Grocery List button
@@ -99,7 +94,7 @@ public class BananaHome extends JFrame {
 
     }
     public static void main (String[] args) {
-        new BananaHome();
+        //new BananaHome();
     }
 
 }

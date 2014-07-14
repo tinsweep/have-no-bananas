@@ -8,25 +8,43 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class ShoppingListDAO implements BananasDAO {
 	private Connection con;
 	private ResultSet rs;
 	private Statement st;
 	private PreparedStatement ps;
-	
+	/*
+	 *Method to create the table that holds the names of all current shopping lists. It is called from saveListOfItems
+	 *and in turn, calls the method to addToShoppingListNames
+	 * */
 	private void createTableOfShoppingListNames(String listName)throws DAOException{
 		con = DAOUtils.getConnection(con);
 		try {
-			String table = "ShoppingListNames";
-			ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS " + table + "(ListName VARCHAR(50))");
+			ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS ShoppingListNames (ListName VARCHAR(25) NOT NULL, PRIMARY KEY (ListName))");
 			ps.execute();
-			ps = con.prepareStatement("INSERT INTO ShoppingListNames (ListName) VALUES(?)");
+			
+		} catch (SQLException e) {
+			throw new DAOException("There was a problem adding the shopping list to the names table.", e);
+		}finally{
+			DAOUtils.closePrepared(ps);
+		}
+		addToShoppingListNames(listName);
+	}
+	/*
+	 * Method to add shopping list name to ShoppingListNames table
+	 * */
+	private void addToShoppingListNames(String listName) throws DAOException{
+		con = DAOUtils.getConnection(con);
+		try {
+			ps = con.prepareStatement("INSERT INTO ShoppingListNames (ListName) VALUES(?) ON DUPLICATE KEY UPDATE ListName = ListName");
 			ps.setString(1, listName);
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			throw new DAOException("There was a problem adding the shopping list to the names table.", e);
+			throw new DAOException("There was a problem adding the Shopping list to the table of Shopping List names.", e);
 		}
+		
 	}
 
 	@Override 
@@ -36,19 +54,23 @@ public class ShoppingListDAO implements BananasDAO {
 		con = DAOUtils.getConnection(con);
 		try {
 			ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS " + listName
-					+ "(Name VARCHAR(25), Quantity DOUBLE, Price DOUBLE, "
-					+ "Unit VARCHAR(25), Category VARCHAR(50))");
+					+ "(Name VARCHAR(25) NOT NULL, Quantity DOUBLE, Price DOUBLE, "
+					+ "Unit VARCHAR(25), Category VARCHAR(50),"
+					+ "PRIMARY KEY (Name))");
 			ps.execute();	
-			createTableOfShoppingListNames(listName);	
+				
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem creating the shopping list table.", e);
+		}finally{
+			DAOUtils.closePrepared(ps);
 		}
+		createTableOfShoppingListNames(listName);
 	}
 	
 	@Override
 	/*
 	 * Calls createShoppingListTable, then iterates over each list item and inserts a row for each item in the 
-	 * array list
+	 * array list. If the list item being inserted already exists, it will be replaced
 	 * */
 	public void saveListOfItems(ListOfItems listToSave) throws DAOException{
 		con = DAOUtils.getConnection(con);
@@ -62,7 +84,7 @@ public class ShoppingListDAO implements BananasDAO {
 			
 			try {
 				ps = con.prepareStatement("INSERT INTO " + listToSave.getName() + " "
-						+ "(Name, Quantity, Price, Unit, Category) VALUES(?, ? , ? , ? , ?)");
+						+ "(Name, Quantity, Price, Unit, Category) VALUES(?, ? , ? , ? , ?) ON DUPLICATE KEY UPDATE QUANTITY = QUANTITY");
 				ps.setString(1, name);
 				ps.setDouble(2, qty);
 				ps.setDouble(3, price);
@@ -73,9 +95,9 @@ public class ShoppingListDAO implements BananasDAO {
 			} catch (SQLException e) {
 				throw new DAOException("There was a problem saving the shopping list.", e);
 			}finally{
-				//DAOUtils.closePrepared(ps);
+				DAOUtils.closePrepared(ps);
 				//DAOUtils.closeConn(con);
-
+				//NOTE: this is causing errors, need connection pool
 			}
 		}//end for-each
 	}//end saveListOfItems
@@ -83,7 +105,7 @@ public class ShoppingListDAO implements BananasDAO {
 
 	@Override
 	/*
-	 * Returns a Shopping list form the database
+	 * Returns a Shopping list from the database with the given name
 	 * */
 	
 	public ListOfItems getListOfItems(String listName) throws DAOException{	
@@ -116,12 +138,14 @@ public class ShoppingListDAO implements BananasDAO {
 		} catch (SQLException e) {
 			throw new DAOException("There was an error getting the list from the database.", e);
 		}finally{
-			DAOUtils.closeConn(con);
-			DAOUtils.closeStatement(ps);
 			DAOUtils.closeResultSet(rs);
+			DAOUtils.closeStatement(st);
 		}
 		return result;
 	}
+	/*
+	 * Adds a list item to a shopping list with the specified name
+	 */
 	@Override
 	public void addItemToList(ListItem itemToAdd, String listName) throws DAOException{
 		con = DAOUtils.getConnection(con);
@@ -137,11 +161,14 @@ public class ShoppingListDAO implements BananasDAO {
 		} catch (SQLException e) {
 			throw new DAOException(e);		
 		}finally{
-			DAOUtils.closeConn(con);
+			//DAOUtils.closeConn(con);
 			DAOUtils.closePrepared(ps);
 		}
 
 	}
+	/*
+	 * Deletes the specified shopping list and deletes its name from the table of shopping list names
+	 */
 	@Override
 	public void deleteList(String listName) throws DAOException{
 		con = DBConnector.getConnection(con);
@@ -154,14 +181,33 @@ public class ShoppingListDAO implements BananasDAO {
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem deleting the shopping list.", e);
 		}finally{
-			DAOUtils.closeConn(con);
+			//DAOUtils.closeConn(con);
 			DAOUtils.closePrepared(ps);
 		}
 		}
-
+	/*
+	 * queries the table of shopping list names and returns an ArrayList containing all current shopping lists
+	 * */
 	@Override
-	public void updateList(ListOfItems listToUpdate) {
-		//unimplemented method
+	public ArrayList<ListOfItems> getAllShoppingLists() throws DAOException{
+		con = DAOUtils.getConnection(con);
+		ArrayList<ListOfItems> allLists = new ArrayList<ListOfItems>();
+		ResultSet rs2= null;
+		try {
+			ps = con.prepareStatement("SELECT * FROM ShoppingListNames");
+			rs2 = ps.executeQuery();
+			while(rs2.next()){
+				String tableName = rs2.getString(1);
+				ListOfItems item = getListOfItems(tableName);
+				allLists.add(item);
+			}
+		} catch (SQLException e) {
+			throw new DAOException("There was a problem retrieving the shopping lists from the database", e);
+		}finally{
+			DAOUtils.closePrepared(ps);
+			DAOUtils.closeResultSet(rs2);
+		}
+		return allLists;
 	}
 
 }

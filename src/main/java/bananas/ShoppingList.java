@@ -12,6 +12,8 @@ public class ShoppingList implements ListOfItems {
     private String name;
     private ArrayList<ListItem> itemsList = new ArrayList<ListItem>(10);
     private HashMap<String, Integer> itemLookup = new HashMap<String, Integer>(10);
+    private ShoppingListDAO dao = new ShoppingListDAO();
+    private FoodItemDAO foodDAO = new FoodItemDAO();
 
     public ShoppingList(String inputName){
         name = inputName;
@@ -141,6 +143,30 @@ public class ShoppingList implements ListOfItems {
         }
     }
 
+    //Methods to call DAO Layer
+    
+    public void saveShoppingListToDB(){
+    	dao.saveListOfItems(this);
+    	for(ListItem item : itemsList){
+    		foodDAO.saveFoodItem(item.getFoodItem(), this.getName());
+    	}
+    }
+    
+    public void updateShoppingListinDB(){
+    	dao.updateList(this);
+    }
+    
+    public ListOfItems getShoppingListFromDB(){
+    	return dao.getListOfItems(this.getName());
+    }
+    
+    public void deleteShoppingListFromDB(){
+    	dao.deleteList(this.getName());
+    }
+    
+    public ArrayList<ListOfItems> getAllShoppingListsFromDB(){
+    	return dao.getAllShoppingLists();
+    }
     //@Override
     //Checks key attributes and listItems to see if input ShoppingList is the same
     //(equivalent) this object.

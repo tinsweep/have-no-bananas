@@ -209,5 +209,30 @@ public class ShoppingListDAO implements BananasDAO {
 		}
 		return allLists;
 	}
+	
+	@Override
+	public void updateList(ListOfItems listToUpdate) throws DAOException{
+		con = DAOUtils.getConnection(con);
+		for(ListItem item : listToUpdate.getList()){
+			try {
+				//iterate over array list and update each 
+				ps = con.prepareStatement("INSERT INTO " + listToUpdate.getName() +  "(Name, Quantity, Price, Unit, Category) VALUES(?, ? , ? , ? , ?) ON DUPLICATE KEY UPDATE Quantity = ?, Price = ?, Unit = ?, Category = ?");
+				ps.setString(1, item.getName() );
+				ps.setDouble(2, item.getQuantity() );
+				ps.setDouble(3, item.getPrice() );
+				ps.setString(4, item.getUnit());
+				ps.setString(5, item.getCategory());
+				ps.setDouble(6, item.getQuantity());
+				ps.setDouble(7, item.getPrice());
+				ps.setString(8, item.getUnit());
+				ps.setString(9, item.getCategory());
+				ps.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new DAOException("There was a problem updating the shopping list.", e);
+			}
+		}
+		
+	}
 
 }

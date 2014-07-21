@@ -13,4 +13,5 @@ public interface BananasDAO {
 	public void addItemToList(ListItem itemToAdd, String listName);
 	public void deleteList(String listName);
 	public ArrayList<ListOfItems> getAllShoppingLists();
+	public void updateList(ListOfItems listToUpdate);
 }

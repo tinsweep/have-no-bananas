@@ -71,7 +71,6 @@ public class ShoppingListDAOTest {
 			String namesTableIsCreated = null;
 			ResultSet namesTableResult;
 			dao.createShoppingListTable(listToTest.getName());
-			
 			Boolean isTable = null;
 			try {
 				DatabaseMetaData metadata = con.getMetaData();
@@ -150,6 +149,16 @@ public class ShoppingListDAOTest {
 			assertTrue(testList.equals(printList));
 			
 			
+		}
+		
+		@Test
+		public void testUpdateList(){
+			dao.saveListOfItems(listToTest);
+			listToTest.addItem(item3);
+			dao.updateList(listToTest);
+			ShoppingList blah = (ShoppingList) dao.getListOfItems(testTable);
+			ShoppingList blahdeedah = (ShoppingList) testAgainstList;
+			assertTrue(blahdeedah.equals(blah));
 		}
 		
 		@After

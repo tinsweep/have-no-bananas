@@ -19,7 +19,7 @@ public class FoodItemDAOTest {
 	private ResultSet rs;
 	private PreparedStatement ps;
 	private Boolean tableCreated;
-	
+
 	@Before
 	public void setUp(){
 		con = DAOUtils.getConnection(con);
@@ -29,7 +29,7 @@ public class FoodItemDAOTest {
 	@Test
 	public void testTableCreation(){
 		fDAO.createFoodItemTable();
-		
+
 		try {
 			DatabaseMetaData metadata = con.getMetaData();
 			rs = metadata.getTables(null, null, "FOODITEMS", null);
@@ -40,7 +40,7 @@ public class FoodItemDAOTest {
 		}
 		assertTrue(tableCreated);
 	}
-	
+
 	@Test
 	public void testThatItemIsCounted(){
 		fDAO.saveFoodItem(item, "SampleList");
@@ -58,16 +58,16 @@ public class FoodItemDAOTest {
 			throw new DAOException(e);
 		}
 		assertEquals(itemCount, (Integer)3);
-		
+
 	}
-	
+
 	@After
 	public void tearDown(){
 		con = DBConnector.getConnection(con);
 		try {
 			ps = con.prepareStatement("DROP TABLE foodItems");
 			ps.execute();
-			
+
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		}

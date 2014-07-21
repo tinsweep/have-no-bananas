@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="have-no-bananas" default="all" basedir=".">
+
+    <property name="src.dir" value="src${file.separator}main${file.separator}java"
+              description="project source code"/>
+    
+	<property name="src-test.dir" value="src${file.separator}test${file.separator}java"
+	          description="project test code"/>
+    
+	<property name="lib.dir" value="lib"
+	          description="project libraries are found here"/> <!-- Where lib = folder in build.xml's directory -->
+    
+	<property name="build.dir" value="build"
+              description="anything this build script generates goes under this directory"/>
+    
+	<property name="classes.dir" value="${build.dir}${file.separator}classes"
+              description="Java class files compiled by this build script  go here"/>
+    
+	<property name="report.dir" value="${build.dir}${file.separator}report"
+              description="this directory is used by JUnit. Test results are placed here in a nice HTML format"/>
+	
+	<property name="mockito" value="${lib.dir}${file.separator}mockito"/> 
+
+    <!-- EMMA SETUP -->
+	<property name="coverage.dir" value="${basedir}${file.separator}emma"
+              description="directory which emma coverage reports will be written to"/>    
+
+    <property name="instr.dir" value="${build.dir}${file.separator}emmainstr"
+              description="directory which emma instrumentation classes will be written to" /> 
+
+    <property name="emma.dir" value="${basedir}${file.separator}lib" 
+	          description="directory that contains emma.jar and emma_ant.jar"/>
+
+    <!-- Set emma.lib to refer to the list of EMMA jar files -->
+   <path id="emma.lib" >
+      <fileset dir="${emma.dir}">
+          <include name="*.jar"/>
+      </fileset>
+    </path>
+
+    <!-- Define which classes will be reported in the coverage reports (by default, we will include all classes and assume -->
+    <!-- that your project's output folder is target/classes -->
+    <path id="emma.coverage.classes" >
+      <pathelement location="${classes.dir}" />
+    </path>
+	
+	<!-- Load <emma> and <emmajava> custom tasks so that they can be used in ANT -->
+	<taskdef resource="emma_ant.properties" classpathref="emma.lib"/>
+
+    <!-- this sets up the classpath for the project. Whenever you a .jar to the lib directory it will automatically be
+        be added to the classpath
+    -->
+    <path id="project.classpath" description="the project's class path all third party libs are on it. ">
+        <pathelement path="${classes.dir}"/>
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+		<fileset dir="${mockito}">
+		    <include name="**/*.jar"/>
+		</fileset>
+    </path>
+
+    <!-- debug targets follow -->
+	<target name="info" description="executes debug statements">
+	    <echo>${lib.dir}</echo>
+		<echo>${basedir}</echo>
+		<echo>${coverage.dir}</echo>
+	</target>
+
+    <!-- targets follow - each target does one thing in the compile, run, test and build process -->
+
+    <target name="clean" description="deletes all build artifacts (anything created by this build file)">
+        <delete dir="${instr.dir}"/>
+		<delete dir="${classes.dir}"/>
+        <delete dir="${report.dir}"/>
+        <delete dir="${build.dir}"/>
+		<delete dir="${coverage.dir}"/>
+    </target>
+
+    <target name="init" description="Build initialization - create output directories" depends="clean">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${report.dir}"/>
+    </target>
+
+    <target name="compile" description="Compile all the code; produce classes" depends="init">
+        <javac destdir="${classes.dir}" debug="true" >
+            <src path="${src.dir}"/>
+            <src path="${src-test.dir}"/>
+            <classpath refid="project.classpath"/>
+        </javac>
+    </target>
+
+    <!-- Enable Emma -->
+    <target name="emma" description="turns on EMMA's instrumentation/reporting" >
+      <property name="emma.enabled" value="true" />
+
+      <!-- EMMA instr class output directory (it is important to create this property only when EMMA is enabled) -->
+      <mkdir dir="${instr.dir}" />
+    
+      <!-- this property, if overriden via -Demma.filter=<list of filter specs>
+       on ANT's command line, will set the coverage filter; by default,
+       all classes found in 'emma.coverage.classes' pathref will be instrumented:
+      -->
+      <property name="emma.filter" value="" />
+    </target>
+
+    <target name="test" description="Runs all the JUnit tests and generates the test results report" depends="compile">
+
+        <!-- EMMA INSTRUMENTATION                                                                                     -->
+        <!-- Instrument the classes, this takes the normal classes, and makes instrumented classes instead            -->
+        <!-- Note that EMMA takes regular ANT path elements as instrumentation input, which is exceedingly convenient -->
+		<emma enabled="${emma.enabled}" >
+            <instr instrpathref="emma.coverage.classes"
+			     mode="fullcopy"
+                 destdir="${instr.dir}"
+                 metadatafile="${coverage.dir}${file.separator}metadata.em"
+                 merge="true"
+            >
+                <filter value="${emma.filter}" />
+				<!--filter excludes="*Test*" /-->
+            </instr>
+        </emma>
+
+        <junit printsummary="yes" haltonfailure="false" showoutput="true" failureproperty="test_failure" fork="true">
+			<classpath>
+			  <pathelement location="${instr.dir}"/>
+			  <path refid="project.classpath"/>
+			  <path refid="emma.lib" />
+			</classpath>
+
+            <formatter type="xml"/>
+
+            <batchtest fork="yes" todir="${report.dir}">
+                <fileset dir="${src-test.dir}">
+                    <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+			
+			<jvmarg value="-Demma.coverage.out.file=${coverage.dir}${file.separator}coverage.ec" />
+			<jvmarg value="-Demma.coverage.out.merge=false" />
+			
+        </junit>
+
+        <junitreport todir="${report.dir}">
+            <fileset dir="${report.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${report.dir}/html"/>
+        </junitreport>
+		
+		<!-- 
+		if enabled, generate coverage report(s):
+
+		To adjust the amount of messages from Emma change the verbosity value:
+
+		  silent:  only severe errors are reported (same as severe)
+          quiet:   only warnings and severe errors are reported (same as warning)
+          info:    default verbosity level, with EMMA reporting on completion of various activities, warnings, and errors
+          verbose: this setting makes EMMA chattier than normal, with extra progress reporting
+		  
+          trace1\
+          trace2 > these settings enable internal tracing (useful mostly for debugging)
+          trace3/
+        -->
+        <emma enabled="${emma.enabled}" verbosity="info">
+            <report sourcepath="${src.dir}"
+                  sort="+block,+name,+method,+class"
+                  metrics="method:70,block:80,line:80,class:100"
+            >
+            <!-- collect all EMMA data dumps (metadata and runtime)
+                 [this can be done via nested <fileset> fileset elements
+                 or <file> elements pointing to a single file]:
+            -->
+            <fileset dir="${coverage.dir}" >
+                <include name="*.em" />
+				<include name="*.ec" />
+            </fileset>
+            <!-- for every type of report desired, configure a nested
+                 element; various report parameters
+                 can be inherited from the parent <report>
+                 and individually overridden for each report type:
+            -->
+            <txt outfile="${coverage.dir}${file.separator}coverage.txt"
+                depth="package"
+                columns="class,method,block,line,name"
+            />
+            <xml outfile="${coverage.dir}${file.separator}coverage.xml"
+                depth="package"
+            />
+            <html outfile="${coverage.dir}${file.separator}coverage.html"
+                depth="method"
+                columns="name,class,method,block,line"
+            />
+            </report>
+        </emma>
+
+        <!-- if a test fails then the property  "test_failure" will be set and we fail now.
+         Failng now, rather than when the test actually failed allows all the tests to complete and the report
+         to be generated. 
+         -->
+        <fail if="test_failure" message="At least one JUnit test failed. Please see report."/>
+
+    </target>
+
+    <!-- this is the default target - it does everything -->
+    <target name="all" depends="emma, info, init, clean, compile, test"
+            description="deletes previous work, compiles new class, runs hello program"/>
+
+</project>

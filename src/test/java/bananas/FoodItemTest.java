@@ -1,7 +1,5 @@
 package bananas;
 
-import main.java.bananas.FoodItem;
-
 import org.junit.Before;
 import org.junit.Test;
 

@@ -13,7 +13,7 @@ public class ShoppingList implements ListOfItems {
     private ArrayList<ListItem> itemsList = new ArrayList<ListItem>(10);
     private HashMap<String, Integer> itemLookup = new HashMap<String, Integer>(10);
     private ShoppingListDAO dao = new ShoppingListDAO();
-    private FoodItemDAO foodDAO = new FoodItemDAO();
+    private ListItemDAO liDAO = new ListItemDAO();
 
     public ShoppingList(String inputName){
         name = inputName;
@@ -148,7 +148,7 @@ public class ShoppingList implements ListOfItems {
     public void saveShoppingListToDB(){
     	dao.saveListOfItems(this);
     	for(ListItem item : itemsList){
-    		foodDAO.saveFoodItem(item.getFoodItem(), this.getName());
+    		liDAO.saveListItem(item, this.getName());
     	}
     }
     

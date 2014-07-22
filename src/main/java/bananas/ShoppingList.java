@@ -147,6 +147,7 @@ public class ShoppingList implements ListOfItems {
     
     public void saveShoppingListToDB(){
     	dao.saveListOfItems(this);
+    	// list items to table of items bought
     	for(ListItem item : itemsList){
     		liDAO.saveListItem(item, this.getName());
     	}

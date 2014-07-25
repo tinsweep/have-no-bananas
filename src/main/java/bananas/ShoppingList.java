@@ -12,8 +12,9 @@ public class ShoppingList implements ListOfItems {
     private String name;
     private ArrayList<ListItem> itemsList = new ArrayList<ListItem>(10);
     private HashMap<String, Integer> itemLookup = new HashMap<String, Integer>(10);
-    private ShoppingListDAO dao = new ShoppingListDAO();
-    private ListItemDAO liDAO = new ListItemDAO();
+    private DAOUtils daoUtil = new DAOUtils();
+    private ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+    private ListItemDAO liDAO = new ListItemDAO(daoUtil);
 
     public ShoppingList(String inputName){
         name = inputName;

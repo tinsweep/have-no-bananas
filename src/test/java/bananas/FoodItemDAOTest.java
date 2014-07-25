@@ -61,7 +61,6 @@ public class FoodItemDAOTest {
 			throw new DAOException(e);
 		}
 		assertEquals(itemCount, (Integer)3);
-
 	}
 	
 	@Test(expected = DAOException.class)
@@ -99,5 +98,4 @@ public class FoodItemDAOTest {
 			throw new DAOException(e);
 		}
 	}
-
 }

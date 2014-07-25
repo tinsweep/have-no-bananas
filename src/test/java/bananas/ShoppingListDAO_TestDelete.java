@@ -19,6 +19,7 @@ public class ShoppingListDAO_TestDelete {
 	private Statement st;
 	private String testTable = "WalMart";
 	private ShoppingList li;	
+	private DAOUtils daoUtil = new DAOUtils();
 	
 	@Before public void setUp(){
 	con = DBConnector.getConnection(con);
@@ -39,7 +40,7 @@ public class ShoppingListDAO_TestDelete {
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem deleting the shopping list from the database.", e);
 		}finally{
-			DAOUtils.closeResultSet(rs);
+			daoUtil.closeResultSet(rs);
 		}
 	}
 	@Test
@@ -57,8 +58,8 @@ public class ShoppingListDAO_TestDelete {
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem deleting from the shopping list names table.", e);
 		}finally{
-		DAOUtils.closeResultSet(rs);
-		DAOUtils.closeStatement(st);
+		daoUtil.closeResultSet(rs);
+		daoUtil.closeStatement(st);
 		}
 		assertTrue(numRows == 0);
 	}

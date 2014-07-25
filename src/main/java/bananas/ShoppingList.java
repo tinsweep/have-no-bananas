@@ -146,24 +146,45 @@ public class ShoppingList implements ListOfItems {
 
     //Methods to call DAO Layer
     
-    public void saveShoppingListToDB(){
+    public Boolean saveShoppingListToDB(){
+    	Boolean isSaved = false;
+    	try{
     	dao.saveListOfItems(this);
     	// list items to table of items bought
     	for(ListItem item : itemsList){
     		liDAO.saveListItem(item, this.getName());
     	}
+    	}catch(DAOException e){
+    		return isSaved;
+    	}
+    	isSaved = true;
+    	return isSaved;
     }
     
-    public void updateShoppingListinDB(){
-    	dao.updateList(this);
+    public Boolean updateShoppingListinDB(){
+    	Boolean isUpdated = false;
+    	try{
+        	dao.updateList(this);
+    	}catch(DAOException e){
+    		return isUpdated;
+    	}
+    	isUpdated = true;
+    	return isUpdated;
     }
     
     public ListOfItems getShoppingListFromDB(){
     	return dao.getListOfItems(this.getName());
     }
     
-    public void deleteShoppingListFromDB(){
-    	dao.deleteList(this.getName());
+    public Boolean deleteShoppingListFromDB(){
+    	Boolean isDeleted = false;
+    	try{
+        	dao.deleteList(this.getName());
+    	}catch(DAOException e){
+    		return isDeleted;
+    	}
+    	isDeleted = true;
+    	return isDeleted;
     }
     
     public ArrayList<ListOfItems> getAllShoppingListsFromDB(){

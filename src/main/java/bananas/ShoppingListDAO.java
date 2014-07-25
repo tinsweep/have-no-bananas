@@ -4,6 +4,7 @@ package bananas;
  * Created by Bryan on 6/7/2014.
  **/
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,27 +17,43 @@ public class ShoppingListDAO implements BananasDAO {
 	private Statement st;
 	private PreparedStatement ps;
 	private DAOUtils daoUtil;
-	
+
 	public ShoppingListDAO(){
 		if(daoUtil == null){
 			daoUtil = new DAOUtils();
 		}
 	}
-	
+
 	public ShoppingListDAO(DAOUtils daoUtil){
 		this.daoUtil = daoUtil;
+	}
+	
+	/*Helper method to check if table exists*/
+	public boolean tableExists(String tableName){
+		ResultSet returned;
+		
+		boolean isTable = false;
+		try {
+			con = daoUtil.getConnection();
+			DatabaseMetaData metadata = con.getMetaData();
+			returned = metadata.getTables(null, null, tableName, null);
+			isTable = returned.next();
+		}catch(SQLException e){
+			return isTable;
+		}
+		return isTable;
 	}
 	/*
 	 *Method to create the table that holds the names of all current shopping lists. It is called from saveListOfItems
 	 *and in turn, calls the method to addToShoppingListNames
 	 * */
 	private void createTableOfShoppingListNames(String listName){ 
-		
+
 		try {
 			con = daoUtil.getConnection();
 			ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS ShoppingListNames (ListName VARCHAR(25) NOT NULL, PRIMARY KEY (ListName))");
 			ps.execute();
-			
+
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem adding the shopping list to the names table.", e);
 		}finally{
@@ -48,7 +65,7 @@ public class ShoppingListDAO implements BananasDAO {
 	 * Method to add shopping list name to ShoppingListNames table
 	 * */
 	private void addToShoppingListNames(String listName){
-		
+
 		try {
 			con = daoUtil.getConnection();
 			ps = con.prepareStatement("INSERT INTO ShoppingListNames (ListName) VALUES(?) ON DUPLICATE KEY UPDATE ListName = ListName");
@@ -57,7 +74,7 @@ public class ShoppingListDAO implements BananasDAO {
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem adding the Shopping list to the table of Shopping List names.", e);
 		}
-		
+
 	}
 
 	@Override 
@@ -71,7 +88,7 @@ public class ShoppingListDAO implements BananasDAO {
 					+ "Unit VARCHAR(25), Category VARCHAR(50),"
 					+ "PRIMARY KEY (Name))");
 			ps.execute();	
-				
+
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem creating the shopping list table.", e);
 		}finally{
@@ -80,7 +97,7 @@ public class ShoppingListDAO implements BananasDAO {
 		}
 		createTableOfShoppingListNames(listName);
 	}
-	
+
 	@Override 
 	/*
 	 * Calls createShoppingListTable, then iterates over each list item and inserts a row for each item in the 
@@ -94,7 +111,7 @@ public class ShoppingListDAO implements BananasDAO {
 			String cat = li.getCategory();
 			Double price = li.getPrice();
 			Double qty = li.getQuantity();
-			
+
 			try {
 				con = daoUtil.getConnection();
 				ps = con.prepareStatement("INSERT INTO " + listToSave.getName() + " "
@@ -105,7 +122,7 @@ public class ShoppingListDAO implements BananasDAO {
 				ps.setString(4, unit);
 				ps.setString(5, cat);
 				ps.executeUpdate();
-				
+
 			} catch (SQLException e) {
 				throw new DAOException("There was a problem saving the shopping list.", e);
 			}finally{
@@ -115,17 +132,21 @@ public class ShoppingListDAO implements BananasDAO {
 			}
 		}//end for-each
 	}//end saveListOfItems
-	
+
 
 	@Override
 	/*
 	 * Returns a Shopping list from the database with the given name
 	 * */
-	
+
 	public ListOfItems getListOfItems(String listName){	
 		ListOfItems result = new ShoppingList(listName);
 		ListItem item;
 		FoodItem foodItem;
+		boolean notTable = tableExists(listName);
+		if(!notTable){
+			throw new DAOException("This table does not exist");
+		}
 		try {
 			con = daoUtil.getConnection();
 			String query = "SELECT * FROM " + listName;
@@ -133,12 +154,12 @@ public class ShoppingListDAO implements BananasDAO {
 			rs = st.executeQuery(query);
 		while(rs.next()){
 				String name = rs.getString(1);
-				
+
 				Double qty = rs.getDouble(2);
 				Double price = rs.getDouble(3);
 				String unit = rs.getString(4);
 				String cat = rs.getString(5);
-				
+
 				foodItem = new FoodItem(name);
 				foodItem.setCategory(cat);
 				item = new ListItem.CreateListItem(foodItem).quantity(qty).unit(unit).price(price).create();
@@ -147,7 +168,7 @@ public class ShoppingListDAO implements BananasDAO {
 				result.addItem(item);
 
 		}//end while
-			
+
 		} catch (SQLException e) {
 			throw new DAOException("There was an error getting the list from the database.", e);
 		}finally{
@@ -161,6 +182,10 @@ public class ShoppingListDAO implements BananasDAO {
 	 */
 	@Override
 	public void addItemToList(ListItem itemToAdd, String listName){
+		boolean notTable = tableExists(listName);
+		if(!notTable){
+			throw new DAOException("This table does not exist");
+		}
 		try {
 			con = daoUtil.getConnection();
 			ps = con.prepareStatement("INSERT INTO " + listName + " (Name, Quantity, Price, Unit, Category) VALUES(?, ? , ? , ? , ?)");
@@ -184,6 +209,10 @@ public class ShoppingListDAO implements BananasDAO {
 	 */
 	@Override
 	public void deleteList(String listName){
+		boolean notTable = tableExists(listName);
+		if(!notTable){
+			throw new DAOException("This table does not exist");
+		}
 		try {
 			con = daoUtil.getConnection();
 			ps = con.prepareStatement("DROP TABLE " + listName);
@@ -222,9 +251,13 @@ public class ShoppingListDAO implements BananasDAO {
 		}
 		return allLists;
 	}
-	
+
 	@Override
 	public void updateList(ListOfItems listToUpdate){		
+		boolean notTable = tableExists(listToUpdate.getName());
+		if(!notTable){
+			throw new DAOException("This table does not exist");
+		}
 			try {
 				con = daoUtil.getConnection();
 				//iterate over array list and update each 

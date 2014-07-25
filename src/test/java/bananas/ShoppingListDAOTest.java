@@ -77,7 +77,7 @@ public class ShoppingListDAOTest {
 			Boolean isTable = null;
 			try {
 				DatabaseMetaData metadata = con.getMetaData();
-				returned = metadata.getTables(null, null, "HEB", null);
+				returned = metadata.getTables(null, null, "WALMART", null);
 				isTable = returned.next();
 				st = con.createStatement();
 				namesTableResult = st.executeQuery(query);
@@ -94,18 +94,17 @@ public class ShoppingListDAOTest {
 		}
 
 		@Test 
-		public void testSaveListOfItems() throws DAOException, SQLException{
+		public void testSaveListOfItems() {
 			dao.saveListOfItems(listToTest);
-			ListOfItems liTest = dao.getListOfItems(testTable);
+			ListOfItems liReturned = dao.getListOfItems(listToTest.getName());
 			ShoppingList castLi = (ShoppingList)listToTest;
-			ShoppingList castReturn = (ShoppingList) liTest;
-			Boolean isSame = castLi.equals(castReturn);
-
+			ShoppingList castReturn = (ShoppingList) liReturned;
+			Boolean isSame = castLi.equals(castReturn);			
 			assertTrue(isSame);		
 		}
 			
 		@Test
-		public void testGetListOfItems() throws DAOException, SQLException{
+		public void testGetListOfItems() {
 			dao.saveListOfItems(listToTest);
 			ListOfItems loi = dao.getListOfItems(testTable);
 			//cast from ListOfItems to ShoppingList
@@ -113,6 +112,12 @@ public class ShoppingListDAOTest {
 			ShoppingList castLi = (ShoppingList) listToTest;
 			Boolean isSame = castLoi.equals(castLi);
 			assertTrue(isSame);
+		}
+		
+		@Test(expected = DAOException.class)
+		public void testGetListFail(){
+			dao.saveListOfItems(listToTest);
+			dao.getListOfItems("NoSuchTable");
 		}
 		
 		@Test
@@ -125,6 +130,13 @@ public class ShoppingListDAOTest {
 			ShoppingList castTestAgainst = (ShoppingList)testAgainstList;
 			Boolean isAddedToList = castLoi.equals(castTestAgainst);
 			assertTrue(isAddedToList);	
+		}
+		
+		@Test(expected = DAOException.class)
+		public void testAddItemFal(){
+			//to avoid error in tearDown()
+			dao.saveListOfItems(listToTest);
+			dao.addItemToList(item3, "NoSuchList");
 		}
 		
 		@Test
@@ -164,6 +176,13 @@ public class ShoppingListDAOTest {
 			assertTrue(blahdeedah.equals(blah));
 		}
 		
+		@Test(expected = DAOException.class)
+		public void testUpdateFails(){
+			//avoid error in tearDown()
+			dao.saveListOfItems(listToTest);
+			dao.updateList(anotherList);
+		}
+		
 		@Test
 		public void testDeleteList() throws DAOException, SQLException{
 			ResultSet rs = null;
@@ -182,6 +201,13 @@ public class ShoppingListDAOTest {
 			}
 			//recreate table so that tearDown method does not create error
 			dao.saveListOfItems(listToTest);
+		}
+		
+		@Test(expected = DAOException.class)
+		public void testDeleteFails(){
+			//avoid error in tearDown()
+			dao.saveListOfItems(listToTest);
+			dao.deleteList("NoSuchList");
 		}
 		@Test
 		public void test_That_DeleteList_Drops_Table_Name_from_ShoppingListNames() throws DAOException, SQLException{

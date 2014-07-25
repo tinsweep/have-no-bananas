@@ -15,7 +15,9 @@ public class DAOUtils {
 
 	public void closeConn(Connection conn){
 		try {
-			conn.close();
+			if(conn != null){
+				conn.close();
+			}
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem closing the connection.", e);
 		}
@@ -23,7 +25,9 @@ public class DAOUtils {
 	
 	public void closePrepared(PreparedStatement ps){
 		try {
-			ps.close();
+			if(ps != null){
+				ps.close();
+			}
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem closing the connection.", e);
 		}
@@ -31,7 +35,9 @@ public class DAOUtils {
 	
 	public void closeStatement(Statement st){
 		try {
-			st.close();
+			if(st != null){
+				st.close();	
+			}
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem closing the connection.", e);
 		}
@@ -39,7 +45,9 @@ public class DAOUtils {
 	
 	public void closeResultSet(ResultSet rs){
 		try {
-			rs.close();
+			if(rs != null){
+				rs.close();
+			}
 		} catch (SQLException e) { 
 			throw new DAOException("There was a problem closing the connection.", e);
 		} 

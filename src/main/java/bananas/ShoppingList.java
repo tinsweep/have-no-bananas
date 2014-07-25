@@ -3,6 +3,7 @@ package bananas;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Jen on 6/22/2014.
@@ -145,7 +146,9 @@ public class ShoppingList implements ListOfItems {
     }
 
     //Methods to call DAO Layer
-    
+    /**
+     * Created by Bryan on 7/21/2014.
+     */
     public Boolean saveShoppingListToDB(){
     	Boolean isSaved = false;
     	try{
@@ -172,8 +175,18 @@ public class ShoppingList implements ListOfItems {
     	return isUpdated;
     }
     
-    public ListOfItems getShoppingListFromDB(){
-    	return dao.getListOfItems(this.getName());
+    public Map<String, ListOfItems> getShoppingListFromDB(String listName){
+    	ListOfItems loi = null;
+    	Map<String, ListOfItems> retList = new HashMap<String, ListOfItems>();
+    	
+    	try{
+    		loi = dao.getListOfItems(listName);
+    	}catch(DAOException e){
+    		retList.put("Fail", loi);
+    		return retList;
+    	}
+    		retList.put("Pass", loi);
+    	return retList;
     }
     
     public Boolean deleteShoppingListFromDB(){
@@ -187,8 +200,17 @@ public class ShoppingList implements ListOfItems {
     	return isDeleted;
     }
     
-    public ArrayList<ListOfItems> getAllShoppingListsFromDB(){
-    	return dao.getAllShoppingLists();
+    public Map<String, ArrayList<ListOfItems>> getAllShoppingListsFromDB(){
+    	ArrayList<ListOfItems> allLists = null;
+    	Map<String, ArrayList<ListOfItems>> transferLists = new HashMap<String, ArrayList<ListOfItems>>();
+    	try{
+    		allLists = dao.getAllShoppingLists();
+    	}catch(DAOException e){
+    		transferLists.put("Fail", allLists);
+    		return transferLists;
+    	}
+    	transferLists.put("Pass", allLists);
+    	return transferLists; 
     }
     //@Override
     //Checks key attributes and listItems to see if input ShoppingList is the same

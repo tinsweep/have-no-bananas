@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import  java.util.ArrayList;
+import java.util.Map;
 
 import static junit.framework.Assert.*;
 
@@ -295,5 +296,112 @@ public class ShoppingListTest {
         shoppingList = null;
         compList = null;
     }
-
+    
+    /**
+     * Created by Bryan on 7/25/2014.
+     */
+    @Test
+    public void testSaveToBD(){
+    	DAOUtils daoUtil = new DAOUtils();
+    	ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+    	ShoppingList shoppingList = new ShoppingList("TestList");
+    	shoppingList.addList(testShoppingList);
+    	
+    	Boolean isSaved = shoppingList.saveShoppingListToDB();
+    	assertTrue(isSaved);
+    }
+    
+    /**
+     * Created by Bryan on 7/25/2014.
+     */
+    @Test
+    public void testDeleteListFromDB(){
+    	DAOUtils daoUtil = new DAOUtils();
+    	ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+    	ShoppingList shoppingList = new ShoppingList("TestList");
+    	shoppingList.addList(testShoppingList);
+    	
+    	Boolean isDeleted = shoppingList.deleteShoppingListFromDB();
+    	assertTrue(isDeleted);
+    }
+    
+    /**
+     * Created by Bryan on 7/25/2014.
+     */
+    @Test
+    public void updateListInDB(){
+    	DAOUtils daoUtil = new DAOUtils();
+    	ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+    	ShoppingList shoppingList = new ShoppingList("TestList");
+    	shoppingList.addList(testShoppingList);
+    	
+    	dao.saveListOfItems(shoppingList);
+    	Boolean isUpdated = shoppingList.updateShoppingListinDB();
+    	assertTrue(isUpdated);
+    }
+    
+    /**
+     * Created by Bryan on 7/25/2014.
+     */
+    @Test
+    public void testGetAllListsFail(){
+    	DAOUtils daoUtil = new DAOUtils();
+    	ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+    	ShoppingList shoppingList = new ShoppingList("TestList");
+    	shoppingList.addList(testShoppingList);
+    	
+   
+    	Map<String, ArrayList<ListOfItems>> allLists = shoppingList.getAllShoppingListsFromDB();
+    	ArrayList<ListOfItems> testListFail = allLists.get("Fail");
+    	assertTrue(testListFail == null);
+    }
+    
+    /**
+     * Created by Bryan on 7/25/2014.
+     */
+    @Test 
+    public void testGetAllListsPass(){
+    	DAOUtils daoUtil = new DAOUtils();
+    	ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+    	ShoppingList shoppingList = new ShoppingList("TestList");
+    	shoppingList.addList(testShoppingList);
+    	dao.saveListOfItems(shoppingList);
+   
+    	Map<String, ArrayList<ListOfItems>> allLists = shoppingList.getAllShoppingListsFromDB();
+    	ArrayList<ListOfItems> testListSuccess = allLists.get("Pass");
+    	ListOfItems hasAList = testListSuccess.get(0);
+    	assertTrue(hasAList != null);
+    }
+    
+    /**
+     * Created by Bryan on 7/25/2014.
+     */
+    @Test
+    public void testGetSingleListFail(){
+    	DAOUtils daoUtil = new DAOUtils();
+    	ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+    	ShoppingList shoppingList = new ShoppingList("TestList");
+    	shoppingList.addList(testShoppingList);
+    	
+    	Map<String, ListOfItems> sList = shoppingList.getShoppingListFromDB("TestList");
+    	ListOfItems testFail = sList.get("Fail");
+    	assertTrue(testFail == null);
+    }
+    
+    /**
+     * Created by Bryan on 7/25/2014.
+     */
+    @Test
+    public void testGetSingleListPass(){
+    	DAOUtils daoUtil = new DAOUtils();
+    	ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+    	ShoppingList shoppingList = new ShoppingList("TestList");
+    	shoppingList.addList(testShoppingList);
+    	
+    	//dao.saveListOfItems(shoppingList);
+   
+    	Map<String, ListOfItems> sList = shoppingList.getShoppingListFromDB("TestList");
+    	ListOfItems testListSuccess = sList.get("Pass");
+    	assertTrue(testListSuccess != null);
+    }
 }

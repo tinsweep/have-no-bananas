@@ -22,7 +22,11 @@ public class ListItemDAOTest {
 	private PreparedStatement ps;
 	private Boolean tableCreated;
 	private DAOUtils daoUtil = new DAOUtils();
+<<<<<<< HEAD
 
+=======
+	 
+>>>>>>> a4647e2368b8701217460552cff3e6a580557006
 	@Before
 	public void setUp() throws SQLException{
 		item = new FoodItem("Apple", "Produce");
@@ -32,7 +36,11 @@ public class ListItemDAOTest {
 	@Test
 	public void testTableCreation(){
 		LiDAO.createFoodItemTable();
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> a4647e2368b8701217460552cff3e6a580557006
 		try {
 			con = daoUtil.getConnection();
 			DatabaseMetaData metadata = con.getMetaData();
@@ -44,7 +52,11 @@ public class ListItemDAOTest {
 		}
 		assertTrue(tableCreated);
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> a4647e2368b8701217460552cff3e6a580557006
 	@Test
 	public void testThatItemIsCounted(){
 		LiDAO.saveListItem(listItem, "SampleList");
@@ -63,9 +75,15 @@ public class ListItemDAOTest {
 			throw new DAOException(e);
 		}
 		assertEquals(itemCount, (Integer)3);
+<<<<<<< HEAD
 
 	}
 
+=======
+		
+	}
+	
+>>>>>>> a4647e2368b8701217460552cff3e6a580557006
 	@Test(expected = DAOException.class)
 	public void testCreateTable() throws DAOException, SQLException{
 		//to avoid error in tear down
@@ -73,11 +91,19 @@ public class ListItemDAOTest {
 		DAOUtils mockUtil = Mockito.mock(DAOUtils.class);
 		ListItemDAO exDAO = new ListItemDAO(mockUtil);
 		Mockito.doThrow(new SQLException()).when(mockUtil).getConnection();
+<<<<<<< HEAD
 
 		exDAO.createFoodItemTable(); 
 		fail("Expected Exception not thrown");
 	}
 
+=======
+		
+		exDAO.createFoodItemTable(); 
+		fail("Expected Exception not thrown");
+	}
+	
+>>>>>>> a4647e2368b8701217460552cff3e6a580557006
 	@Test(expected= DAOException.class)
 	public void testSaveListItemEX() throws SQLException{
 		//to avoid error in tear down
@@ -89,18 +115,30 @@ public class ListItemDAOTest {
 		exDAO.saveListItem(listItem, "SampleList");
 		fail("Expected Exception not thrown");
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> a4647e2368b8701217460552cff3e6a580557006
 	@After
 	public void tearDown(){
 		try {
 			con = daoUtil.getConnection();
 			ps = con.prepareStatement("DROP TABLE listItems");
 			ps.execute();
+<<<<<<< HEAD
 
+=======
+			
+>>>>>>> a4647e2368b8701217460552cff3e6a580557006
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		}
 	}
 
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> a4647e2368b8701217460552cff3e6a580557006

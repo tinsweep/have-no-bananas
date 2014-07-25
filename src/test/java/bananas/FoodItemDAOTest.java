@@ -20,17 +20,10 @@ public class FoodItemDAOTest {
 	private ResultSet rs;
 	private PreparedStatement ps;
 	private Boolean tableCreated;
-<<<<<<< HEAD
-
-	@Before
-	public void setUp(){
-		con = DAOUtils.getConnection(con);
-=======
 	private DAOUtils daoUtil = new DAOUtils();
 	 
 	@Before 
 	public void setUp() throws SQLException{
->>>>>>> a4647e2368b8701217460552cff3e6a580557006
 		item = new FoodItem("Apple", "Produce");
 		fDAO = new FoodItemDAO(daoUtil);
 	}
@@ -70,9 +63,6 @@ public class FoodItemDAOTest {
 		assertEquals(itemCount, (Integer)3);
 
 	}
-<<<<<<< HEAD
-
-=======
 	
 	@Test(expected = DAOException.class)
 	public void testCreateTableEX() throws SQLException{
@@ -98,7 +88,6 @@ public class FoodItemDAOTest {
 		fail("Expected Exception not thrown");
 	}
 	
->>>>>>> a4647e2368b8701217460552cff3e6a580557006
 	@After
 	public void tearDown(){
 		try {

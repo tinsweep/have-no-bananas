@@ -8,13 +8,17 @@ public class ListItemDAO {
 		private Connection con;
 		private PreparedStatement ps;
 		String insert = "INSERT INTO listItems VALUES(?, ?, ?)";
+		private DAOUtils daoUtil;
 		
+		public ListItemDAO(DAOUtils daoUtil){
+			this.daoUtil = daoUtil;
+		}
 		/**
 		 * Creates the table to hold food items added to a list
 		 */
 		public void createFoodItemTable(){
 			try {
-				con = DAOUtils.getConnection(con);
+				con = daoUtil.getConnection();
 				ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS listItems (ItemName VARCHAR(50) NOT NULL, "
 						+ "ListName VARCHAR(50), "
 						+ "ItemCount INT DEFAULT 0, "
@@ -30,7 +34,7 @@ public class ListItemDAO {
 		 * */
 		public void saveListItem(ListItem item, String listName){
 			try {
-				con = DAOUtils.getConnection(con);
+				con = daoUtil.getConnection();
 
 				createFoodItemTable();			
 				

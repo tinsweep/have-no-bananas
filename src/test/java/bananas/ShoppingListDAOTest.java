@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito; 
 
 
 public class ShoppingListDAOTest {
@@ -28,11 +29,13 @@ public class ShoppingListDAOTest {
 		private ListOfItems testAgainstList;
 		private ListOfItems anotherList;
 		private ListItem item3;
+		private DAOUtils daoUtil = new DAOUtils();
 		
 		@Before
-		public void init(){
-			con = DAOUtils.getConnection(con);
-			dao = new ShoppingListDAO();
+		public void init() throws SQLException{
+			dao = new ShoppingListDAO(daoUtil);
+			con = daoUtil.getConnection();
+			
 			listToTest = new ShoppingList(testTable);
 			testAgainstList = new ShoppingList("WalMart");
 			anotherList = new ShoppingList("HEB");
@@ -41,7 +44,7 @@ public class ShoppingListDAOTest {
 			foodItem.setCategory("meat");
 			ListItem item = new ListItem.CreateListItem(foodItem).quantity(1.0).unit("Unit").price(1.25).create();
 			item.setCategory("meat");
-			
+			 
 			FoodItem foodItem2 = new FoodItem("Bread");
 			foodItem2.setCategory("baked goods");
 			ListItem item2 = new ListItem.CreateListItem(foodItem2).quantity(1.0).unit("Unit").price(2.50).create();
@@ -91,7 +94,7 @@ public class ShoppingListDAOTest {
 		}
 
 		@Test 
-		public void testSaveListOfItems(){
+		public void testSaveListOfItems() throws DAOException, SQLException{
 			dao.saveListOfItems(listToTest);
 			ListOfItems liTest = dao.getListOfItems(testTable);
 			ShoppingList castLi = (ShoppingList)listToTest;
@@ -102,7 +105,7 @@ public class ShoppingListDAOTest {
 		}
 			
 		@Test
-		public void testGetListOfItems(){
+		public void testGetListOfItems() throws DAOException, SQLException{
 			dao.saveListOfItems(listToTest);
 			ListOfItems loi = dao.getListOfItems(testTable);
 			//cast from ListOfItems to ShoppingList
@@ -113,7 +116,7 @@ public class ShoppingListDAOTest {
 		}
 		
 		@Test
-		public void testAddItemToList(){
+		public void testAddItemToList() throws DAOException, SQLException{
 			dao.saveListOfItems(listToTest);
 			dao.addItemToList(item3, testTable);
 			ListOfItems loi = dao.getListOfItems(testTable);
@@ -125,7 +128,7 @@ public class ShoppingListDAOTest {
 		}
 		
 		@Test
-		public void testGetAllLists(){
+		public void testGetAllLists() throws DAOException, SQLException{
 			dao.saveListOfItems(anotherList);
 			dao.saveListOfItems(listToTest);
 			
@@ -135,7 +138,7 @@ public class ShoppingListDAOTest {
 
 		
 		@Test
-		public void testMultipleSaves(){
+		public void testMultipleSaves() throws DAOException, SQLException{
 			dao.saveListOfItems(listToTest);
 			FoodItem foodItem4 = new FoodItem("Eggs");
 			foodItem4.setCategory("category");
@@ -152,7 +155,7 @@ public class ShoppingListDAOTest {
 		}
 		
 		@Test
-		public void testUpdateList(){
+		public void testUpdateList() throws DAOException, SQLException{
 			dao.saveListOfItems(listToTest);
 			listToTest.addItem(item3);
 			dao.updateList(listToTest);
@@ -161,10 +164,120 @@ public class ShoppingListDAOTest {
 			assertTrue(blahdeedah.equals(blah));
 		}
 		
+		@Test
+		public void testDeleteList() throws DAOException, SQLException{
+			ResultSet rs = null;
+			dao.saveListOfItems(listToTest);
+			dao.deleteList(testTable);
+			Boolean isTable;
+			try{
+				DatabaseMetaData metadata = con.getMetaData();
+				rs = metadata.getTables(null, null, testTable, null);
+				isTable = rs.next();
+				assertFalse(isTable);	
+			} catch (SQLException e) {
+				throw new DAOException("There was a problem deleting the shopping list from the database.", e);
+			}finally{
+				daoUtil.closeResultSet(rs);
+			}
+			//recreate table so that tearDown method does not create error
+			dao.saveListOfItems(listToTest);
+		}
+		@Test
+		public void test_That_DeleteList_Drops_Table_Name_from_ShoppingListNames() throws DAOException, SQLException{
+			ResultSet rs = null;
+			dao.saveListOfItems(listToTest);
+			dao.deleteList(testTable);
+			Integer numRows = null;
+			try{
+				String query = "SELECT COUNT(*) FROM ShoppingListNames";
+				st = con.createStatement();
+				rs = st.executeQuery(query);
+				rs.next();
+				numRows = rs.getInt(1);
+				
+			} catch (SQLException e) {
+				throw new DAOException("There was a problem deleting from the shopping list names table.", e);
+			}finally{
+			daoUtil.closeResultSet(rs);
+			daoUtil.closeStatement(st);
+			}
+			assertTrue(numRows == 0);
+			dao.saveListOfItems(listToTest);
+			
+		}
+		
+		@Test(expected = DAOException.class)
+		public void testSaveList() throws DAOException, SQLException{
+			dao.saveListOfItems(listToTest);
+			DAOUtils mockUtil = Mockito.mock(DAOUtils.class);
+			ShoppingList mockShopping = Mockito.mock(ShoppingList.class);
+			//a separate dao object for testing exceptions
+			ShoppingListDAO exDAO = new ShoppingListDAO(mockUtil);
+			Mockito.doThrow(new SQLException()).when(mockUtil).getConnection();
+			exDAO.saveListOfItems(mockShopping);
+		}
+		
+		@Test(expected = DAOException.class)
+		public void testGetListEX() throws DAOException, SQLException{
+			dao.saveListOfItems(listToTest);
+			DAOUtils mockUtil = Mockito.mock(DAOUtils.class);
+			ShoppingListDAO exDAO = new ShoppingListDAO(mockUtil);
+			Mockito.doThrow(new SQLException()).when(mockUtil).getConnection();
+			exDAO.getListOfItems(testTable);
+			fail("Expected Exception not thrown");
+		}
+		
+		@Test(expected = DAOException.class)
+		public void testAddItemEX() throws DAOException, SQLException{
+			dao.saveListOfItems(listToTest);
+			DAOUtils mockUtil = Mockito.mock(DAOUtils.class);
+			ListItem mockItem = Mockito.mock(ListItem.class);
+			ShoppingListDAO exDAO = new ShoppingListDAO(mockUtil);
+			Mockito.doThrow(new SQLException()).when(mockUtil).getConnection();
+			
+			exDAO.addItemToList(mockItem, testTable);
+			fail("Expected Exception not thrown");
+		}
+		
+		@Test(expected = DAOException.class)
+		public void testDeleteEX() throws DAOException, SQLException{
+			dao.saveListOfItems(listToTest);
+			DAOUtils mockUtil = Mockito.mock(DAOUtils.class);
+			ShoppingListDAO exDAO = new ShoppingListDAO(mockUtil);
+			Mockito.doThrow(new SQLException()).when(mockUtil).getConnection();
+			
+			exDAO.deleteList(testTable);
+			fail("Expected Exception not thrown");
+		}
+		
+		@Test(expected = DAOException.class)
+		public void testGetAllListsEX() throws DAOException, SQLException{
+			dao.saveListOfItems(listToTest);
+			DAOUtils mockUtil = Mockito.mock(DAOUtils.class);
+			ShoppingListDAO exDAO = new ShoppingListDAO(mockUtil);
+			Mockito.doThrow(new SQLException()).when(mockUtil).getConnection();
+			
+			exDAO.getAllShoppingLists();
+			fail("Expected Exception not thrown");
+		}
+		
+		@Test(expected = DAOException.class)
+		public void testUpdateEX() throws DAOException, SQLException{
+			dao.saveListOfItems(listToTest);
+			DAOUtils mockUtil = Mockito.mock(DAOUtils.class);
+			ListOfItems mockShopping = Mockito.mock(ListOfItems.class);
+			ShoppingListDAO exDAO = new ShoppingListDAO(mockUtil);
+			Mockito.doThrow(new SQLException()).when(mockUtil).getConnection();
+			
+			exDAO.updateList(mockShopping);
+			fail("Expected Exception not thrown");
+		}
+		
 		@After
 		public void tearDown(){
 			try {
-				con = DAOUtils.getConnection(con);
+				con = daoUtil.getConnection();
 				ps = con.prepareStatement("DROP TABLE " + testTable);
 				ps.execute();
 				ps = con.prepareStatement("DROP TABLE ShoppingListNames");
@@ -174,8 +287,9 @@ public class ShoppingListDAOTest {
 				throw new DAOException(e);
 			}
 			finally{
-				DAOUtils.closePrepared(ps);
-				DAOUtils.closeConn(con);
+				daoUtil.closePrepared(ps);
+				daoUtil.closeConn(con);
 			}
 		}
+		
 	}

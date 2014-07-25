@@ -13,28 +13,30 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class FoodItemDAOTest {
+public class ListItemDAOTest {
 	private FoodItem item;
-	private FoodItemDAO fDAO;
+	private ListItem listItem;
+	private ListItemDAO LiDAO;
 	private Connection con;
 	private ResultSet rs;
 	private PreparedStatement ps;
 	private Boolean tableCreated;
 	private DAOUtils daoUtil = new DAOUtils();
 	 
-	@Before 
+	@Before
 	public void setUp() throws SQLException{
 		item = new FoodItem("Apple", "Produce");
-		fDAO = new FoodItemDAO(daoUtil);
+		listItem = new ListItem.CreateListItem(item).quantity(1.0).unit("Unit").price(1.25).create();
+		LiDAO = new ListItemDAO(daoUtil);
 	}
 	@Test
 	public void testTableCreation(){
-		fDAO.createFoodItemTable();
+		LiDAO.createFoodItemTable();
 		
 		try {
 			con = daoUtil.getConnection();
 			DatabaseMetaData metadata = con.getMetaData();
-			rs = metadata.getTables(null, null, "FOODITEMS", null);
+			rs = metadata.getTables(null, null, "LISTITEMS", null);
 			tableCreated = rs.next();
 
 		} catch (SQLException e) {
@@ -45,14 +47,14 @@ public class FoodItemDAOTest {
 	
 	@Test
 	public void testThatItemIsCounted(){
-		fDAO.saveFoodItem(item, "SampleList");
-		fDAO.saveFoodItem(item, "SampleList");
-		fDAO.saveFoodItem(item, "SampleList");
+		LiDAO.saveListItem(listItem, "SampleList");
+		LiDAO.saveListItem(listItem, "SampleList");
+		LiDAO.saveListItem(listItem, "SampleList");
 		//Item count should be incremented to 3
 		Integer itemCount = null;
 		try {
 			con = daoUtil.getConnection();
-			ps = con.prepareStatement("SELECT * FROM foodItems WHERE ItemName = ?");
+			ps = con.prepareStatement("SELECT * FROM listItems WHERE ItemName = ?");
 			ps.setString(1, item.getName());
 			rs = ps.executeQuery();
 			rs.next();
@@ -65,26 +67,26 @@ public class FoodItemDAOTest {
 	}
 	
 	@Test(expected = DAOException.class)
-	public void testCreateTableEX() throws SQLException{
+	public void testCreateTable() throws DAOException, SQLException{
 		//to avoid error in tear down
-		fDAO.saveFoodItem(item, "SampleList");
+		LiDAO.saveListItem(listItem, "SampleList");
 		DAOUtils mockUtil = Mockito.mock(DAOUtils.class);
-		FoodItemDAO exDAO = new FoodItemDAO(mockUtil);
+		ListItemDAO exDAO = new ListItemDAO(mockUtil);
 		Mockito.doThrow(new SQLException()).when(mockUtil).getConnection();
 		
-		exDAO.createFoodItemTable();
+		exDAO.createFoodItemTable(); 
 		fail("Expected Exception not thrown");
 	}
 	
-	@Test(expected = DAOException.class)
-	public void testSaveListEX() throws SQLException{
+	@Test(expected= DAOException.class)
+	public void testSaveListItemEX() throws SQLException{
 		//to avoid error in tear down
-		fDAO.saveFoodItem(item, "SampleList");
+		LiDAO.saveListItem(listItem, "SampleList");
 		DAOUtils mockUtil = Mockito.mock(DAOUtils.class);
-		FoodItemDAO exDAO = new FoodItemDAO(mockUtil);
+		ListItemDAO exDAO = new ListItemDAO(mockUtil);
 		Mockito.doThrow(new SQLException()).when(mockUtil).getConnection();
-		
-		exDAO.saveFoodItem(item, "SampleList");;
+
+		exDAO.saveListItem(listItem, "SampleList");
 		fail("Expected Exception not thrown");
 	}
 	
@@ -92,7 +94,7 @@ public class FoodItemDAOTest {
 	public void tearDown(){
 		try {
 			con = daoUtil.getConnection();
-			ps = con.prepareStatement("DROP TABLE foodItems");
+			ps = con.prepareStatement("DROP TABLE listItems");
 			ps.execute();
 			
 		} catch (SQLException e) {

@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
 public class DisplayListWindow {
     //Private Variables
     private JFrame mainWindow;
-    private JPanel mainPanel;
+    private JPanel mainPanel, listPanel;
     private GridBagConstraints c;
     private JLabel title;
     private JList groceriesList;
@@ -68,6 +68,15 @@ public class DisplayListWindow {
         title.setFont(GUIColors.getHEADING_FONT());
         title.setForeground(GUIColors.getFONT_BROWN());
         mainPanel.add(title, c);
+
+        //JPanel for groceries
+        listPanel = new JPanel();
+        listPanel.setPreferredSize(new Dimension(150,200));
+        listPanel.setMinimumSize(new Dimension(150,200));
+        c.gridx = 0;
+        c.gridy = 1;
+        mainPanel.add(listPanel, c);
+
         //Groceries List
         listModel = new DefaultListModel();
 
@@ -78,7 +87,7 @@ public class DisplayListWindow {
         listScroller.setPreferredSize(new Dimension(250, 80));
         c.gridx = 0;
         c.gridy = 1;
-        mainPanel.add(groceriesList, c);
+        listPanel.add(groceriesList, c);
 
         //Add item button
         addItemButton = new JButton("Add item");
@@ -115,7 +124,7 @@ public class DisplayListWindow {
         groceriesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         groceriesList.setLayoutOrientation(JList.VERTICAL);
         JScrollPane listScroller = new JScrollPane(groceriesList);
-        listScroller.setPreferredSize(new Dimension(250, 80));
+        listScroller.setPreferredSize(new Dimension(150, 200));
 
         mainPanel.add(list);
         mainPanel.repaint();
@@ -129,7 +138,7 @@ public class DisplayListWindow {
         groceriesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         groceriesList.setLayoutOrientation(JList.VERTICAL);
         JScrollPane listScroller = new JScrollPane(groceriesList);
-        listScroller.setPreferredSize(new Dimension(250, 80));
+        listScroller.setPreferredSize(new Dimension(150, 200));
 
         for (ListItem item : shoppingList.getList()) {
             listModel.addElement(item);

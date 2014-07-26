@@ -10,40 +10,51 @@ import java.sql.Statement;
  * Date: 6/25/14
  */
 public class DAOUtils {
+	private Connection con;
 	private static final String URL = "jdbc:h2:~/bananas/ShoppingLists;MODE=MySQL";
 
-	public static void closeConn(Connection conn){
+	public void closeConn(Connection conn){
 		try {
-			conn.close();
+			if(conn != null){
+				conn.close();
+			}
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem closing the connection.", e);
 		}
 	}
 	
-	public static void closePrepared(PreparedStatement ps){
+	public void closePrepared(PreparedStatement ps){
 		try {
-			ps.close();
+			if(ps != null){
+				ps.close();
+			}
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem closing the connection.", e);
 		}
 	}
 	
-	public static void closeStatement(Statement st){
+	public void closeStatement(Statement st){
 		try {
-			st.close();
+			if(st != null){
+				st.close();	
+			}
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem closing the connection.", e);
 		}
 	}
 	
-	public static void closeResultSet(ResultSet rs){
+	public void closeResultSet(ResultSet rs){
 		try {
-			rs.close();
-		} catch (SQLException e) {
+			if(rs != null){
+				rs.close();
+			}
+		} catch (SQLException e) { 
 			throw new DAOException("There was a problem closing the connection.", e);
-		}
+		} 
 	}
-	public static Connection getConnection(Connection con){
+	
+	//added throws to test SQLExceptions in DAO using a mock DAOUtil
+	public Connection getConnection() throws SQLException{
 		try{
 			con = DriverManager.getConnection(URL);
 		}catch(SQLException e){

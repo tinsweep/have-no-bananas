@@ -8,13 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/*
 import main.java.bananas.DAOException;
 import main.java.bananas.DAOUtils;
 import main.java.bananas.DBConnector;
 import main.java.bananas.ShoppingList;
 import main.java.bananas.ShoppingListDAO;
-*/
 
 import org.junit.Before;
 import org.junit.Test;

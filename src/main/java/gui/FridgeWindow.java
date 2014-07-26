@@ -18,7 +18,7 @@ public class FridgeWindow extends JFrame {
 
     //Private Variables
     private JFrame fridgeWindow;
-    private JPanel mainPanel;
+    private JPanel mainPanel, listPanel;
     private GridBagConstraints c;
     private JLabel title;
     private JList fridgeList;
@@ -26,6 +26,7 @@ public class FridgeWindow extends JFrame {
     private JMenuBar menuBar;
     private JMenu menu;
     private JMenuItem closeMenuItem;
+    private JButton addItemButton, removeItemButton;
 
 
     public FridgeWindow() {
@@ -66,6 +67,14 @@ public class FridgeWindow extends JFrame {
         title.setForeground(GUIColors.getFONT_BROWN());
         mainPanel.add(title, c);
 
+        //JPanel for groceries
+        listPanel = new JPanel();
+        listPanel.setPreferredSize(new Dimension(150,200));
+        listPanel.setMinimumSize(new Dimension(150,200));
+        c.gridx = 0;
+        c.gridy = 1;
+        mainPanel.add(listPanel, c);
+
         //Groceries List
         listModel = new DefaultListModel();
 
@@ -73,10 +82,35 @@ public class FridgeWindow extends JFrame {
         fridgeList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         fridgeList.setLayoutOrientation(JList.VERTICAL);
         JScrollPane listScroller = new JScrollPane(fridgeList);
-        listScroller.setPreferredSize(new Dimension(250, 80));
+        listScroller.setPreferredSize(new Dimension(150, 200));
         c.gridx = 0;
         c.gridy = 1;
-        mainPanel.add(fridgeList, c);
+        listModel.addElement("You have no food!");
+        listPanel.add(fridgeList, c);
+
+        //Add item button
+        addItemButton = new JButton("Add item");
+        c.gridx = 0;
+        c.gridy = 2;
+        mainPanel.add(addItemButton, c);
+        addItemButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                new AddFoodWindow();
+            }
+        });
+
+        //Remove item button
+        removeItemButton = new JButton("Remove item");
+        c.gridx = 0;
+        c.gridy = 3;
+        mainPanel.add(removeItemButton, c);
+        removeItemButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                //Remove item from list
+            }
+        });
 
         //Show the window
         fridgeWindow.setVisible(true);

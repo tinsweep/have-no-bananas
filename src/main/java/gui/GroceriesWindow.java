@@ -18,7 +18,7 @@ public class GroceriesWindow extends JFrame {
 
     //Private Variables
     private JFrame mainWindow;
-    private JPanel mainPanel;
+    private JPanel mainPanel, listPanel;
     private GridBagConstraints c;
     private JLabel title;
     private JList groceriesList;
@@ -26,13 +26,13 @@ public class GroceriesWindow extends JFrame {
     private JMenuBar menuBar;
     private JMenu menu;
     private JMenuItem closeMenuItem;
-    private JButton goButton, createListButton;
+    private JButton goButton, deleteListButton, createListButton;
     private ShoppingList shoppingList;
 
     public GroceriesWindow () {
         //Create the JFrame
         mainWindow = new JFrame("Groceries Home");
-        mainWindow.setSize(300,400);
+        mainWindow.setSize(350,500);
         mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         //Create the main JPanel
@@ -66,6 +66,16 @@ public class GroceriesWindow extends JFrame {
         title.setFont(GUIColors.getHEADING_FONT());
         title.setForeground(GUIColors.getFONT_BROWN());
         mainPanel.add(title, c);
+
+        //JPanel for groceries lists
+        listPanel = new JPanel();
+        listPanel.setPreferredSize(new Dimension(150,200));
+        listPanel.setMinimumSize(new Dimension(150,200));
+        c.gridx = 0;
+        c.gridy = 1;
+        mainPanel.add(listPanel, c);
+
+
         //Groceries List
         listModel = new DefaultListModel();
 
@@ -73,15 +83,16 @@ public class GroceriesWindow extends JFrame {
         groceriesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         groceriesList.setLayoutOrientation(JList.VERTICAL);
         JScrollPane listScroller = new JScrollPane(groceriesList);
-        listScroller.setPreferredSize(new Dimension(250, 80));
+        listScroller.setPreferredSize(new Dimension(150, 200));
+        listModel.addElement("You have no lists");
         c.gridx = 0;
-        c.gridy = 1;
-        mainPanel.add(groceriesList, c);
+        c.gridy = 2;
+        listPanel.add(groceriesList, c);
 
         //"Go" button (select highlighted list item)
         goButton = new JButton("Go");
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 3;
         mainPanel.add(goButton, c);
         goButton.addActionListener(new ActionListener() {
             @Override
@@ -92,10 +103,24 @@ public class GroceriesWindow extends JFrame {
             }
         });
 
+        //"Delete list" button (select highlighted list item)
+        deleteListButton = new JButton("Delete list");
+        c.gridx = 0;
+        c.gridy = 4;
+        mainPanel.add(deleteListButton, c);
+        goButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                //delete selected ShoppingList
+                mainWindow.repaint();
+                mainWindow.setVisible(false);
+            }
+        });
+
         //create list button
         createListButton = new JButton("Create list");
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 5;
         mainPanel.add(createListButton, c);
         createListButton.addActionListener(new ActionListener() {
             @Override

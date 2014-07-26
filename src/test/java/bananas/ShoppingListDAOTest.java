@@ -180,7 +180,8 @@ public class ShoppingListDAOTest {
 		public void testUpdateFails(){
 			//avoid error in tearDown()
 			dao.saveListOfItems(listToTest);
-			dao.updateList(anotherList);
+			ShoppingList unSavedList = new ShoppingList("NoSuchList");
+			dao.updateList(unSavedList);
 		}
 		
 		@Test

@@ -1,9 +1,17 @@
 package gui;
 
 import javax.swing.*;
+
+import bananas.FoodItem;
+import bananas.ListItem;
+import bananas.ListOfItems;
+import bananas.ShoppingList;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Main GUI window of the application, used to access the ShoppingLists and Inventory
@@ -19,9 +27,25 @@ public class BananaHome extends JFrame {
     private JMenuItem exitMenuItem;
     private JLabel title;
     private JButton groceriesButton, fridgeButton;
+    private ShoppingList shoppingList;
+    private Map<String, ArrayList<ListOfItems>> allLists;
+    
 
     public BananaHome(DataContainer dataContainer) {
-
+    	
+    	//Add ShoppingList to database to test "Groceries" Button
+    	shoppingList = new ShoppingList("HomeList");
+    	ShoppingList testList = new ShoppingList("Test");
+    	FoodItem lettuce    = new FoodItem("lettuce", "produce");
+    	FoodItem yogurt     = new FoodItem("yogurt", "dairy");
+    	ListItem lettuceListed = new ListItem.CreateListItem(lettuce).quantity(1.0).unit("head").price(1.0).create();
+    	ListItem yogurtListed = new ListItem.CreateListItem(yogurt).quantity(1.0).unit("pint").price(1.0).create();
+    	testList.addItem(lettuceListed);
+    	testList.addItem(yogurtListed);
+    	testList.saveShoppingListToDB();
+    	//get ShoppingLists
+    	allLists = shoppingList.getAllShoppingListsFromDB();
+    	
         //Create JFrame
         mainWindow = new JFrame("...Have No Bananas");
 
@@ -68,7 +92,8 @@ public class BananaHome extends JFrame {
         groceriesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                new GroceriesWindow();
+                
+                new GroceriesWindow(allLists);
             }
         });
 

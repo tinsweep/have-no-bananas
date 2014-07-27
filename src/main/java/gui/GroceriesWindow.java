@@ -1,13 +1,19 @@
 package gui;
 
+import bananas.DAOUtils;
 import bananas.FoodItem;
 import bananas.ListItem;
+import bananas.ListOfItems;
 import bananas.ShoppingList;
+import bananas.ShoppingListDAO;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * A GUI class to display Lists of groceries
@@ -28,8 +34,12 @@ public class GroceriesWindow extends JFrame {
     private JMenuItem closeMenuItem;
     private JButton goButton, deleteListButton, createListButton;
     private ShoppingList shoppingList;
+    private ArrayList<ListOfItems> hasLists;
+    private ArrayList<ListOfItems> noLists;
+    private DAOUtils daoUtil = new DAOUtils();
+    private ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
 
-    public GroceriesWindow () {
+    public GroceriesWindow (Map<String, ArrayList<ListOfItems>> allLists) {
         //Create the JFrame
         mainWindow = new JFrame("Groceries Home");
         mainWindow.setSize(350,500);
@@ -74,7 +84,8 @@ public class GroceriesWindow extends JFrame {
         c.gridx = 0;
         c.gridy = 1;
         mainPanel.add(listPanel, c);
-
+        
+        
 
         //Groceries List
         listModel = new DefaultListModel();
@@ -84,10 +95,28 @@ public class GroceriesWindow extends JFrame {
         groceriesList.setLayoutOrientation(JList.VERTICAL);
         JScrollPane listScroller = new JScrollPane(groceriesList);
         listScroller.setPreferredSize(new Dimension(150, 200));
-        listModel.addElement("You have no lists");
+        
         c.gridx = 0;
         c.gridy = 2;
         listPanel.add(groceriesList, c);
+        
+        
+        hasLists = allLists.get("Pass");
+        noLists = allLists.get("Fail");
+        
+        
+        if(noLists != null){
+            listModel.addElement("There was an error retrieving the lists from the database. Its probably because the"
+            		+ "guy who coded it has had too many brain inuries");
+        }
+        if(hasLists == null){
+        	listModel.addElement("You have no lists");
+        }
+        else if (hasLists.size() > 0){
+        	for(ListOfItems list : hasLists){
+        		listModel.addElement(list.getName());
+        }//end for-each
+        }//end if
 
         //"Go" button (select highlighted list item)
         goButton = new JButton("Go");
@@ -99,6 +128,16 @@ public class GroceriesWindow extends JFrame {
             public void actionPerformed(ActionEvent event) {
                 //open selected ShoppingList
                 //new DisplayListWindow(shoppingList);
+            	//display window is where all the adding/deleting of items takes place
+            	ShoppingList selectedList;
+            	String listName = (String) groceriesList.getSelectedValue();
+            	for(ListOfItems sList : hasLists){
+            		if(sList.getName() == listName){
+            			selectedList = (ShoppingList) sList;
+            			new DisplayListWindow(selectedList);
+            		}
+            	}
+            	
                 mainWindow.setVisible(false);
             }
         });
@@ -112,6 +151,13 @@ public class GroceriesWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 //delete selected ShoppingList
+            	
+            	String listName = (String) groceriesList.getSelectedValue();
+            	for(ListOfItems sList : hasLists){
+            		if(sList.getName() == listName){
+            			dao.deleteList(listName);
+            		}
+            	}
                 mainWindow.repaint();
                 mainWindow.setVisible(false);
             }

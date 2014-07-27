@@ -27,9 +27,10 @@ public class DisplayListWindow {
     private ShoppingList shoppingList;
     private String listName;
 
-    public DisplayListWindow () {
+    public DisplayListWindow (ShoppingList selectedList) {
         //Get the list name
         //Test
+    	shoppingList = selectedList;
         listName = "Test List";
 
         //Create the JFrame
@@ -164,10 +165,10 @@ public class DisplayListWindow {
         listModel.removeElement(item);
     }
 
-    public static void main (String[] args) {
+   /* public static void main (String[] args) {
         DisplayListWindow test;
-        test = new DisplayListWindow();
+        test = new DisplayListWindow(shoppingList);
 
 
-    }
+    }*/
 }

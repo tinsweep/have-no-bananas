@@ -73,6 +73,8 @@ public class ShoppingListDAO implements BananasDAO {
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem adding the Shopping list to the table of Shopping List names.", e);
+		}finally{
+			//daoUtil.closePrepared(ps);
 		}
 
 	}
@@ -127,7 +129,7 @@ public class ShoppingListDAO implements BananasDAO {
 				throw new DAOException("There was a problem saving the shopping list.", e);
 			}finally{
 				daoUtil.closePrepared(ps);
-				//DAOUtils.closeConn(con);
+				daoUtil.closeConn(con);
 				//NOTE: this is causing errors, need connection pool
 			}
 		}//end for-each
@@ -174,6 +176,7 @@ public class ShoppingListDAO implements BananasDAO {
 		}finally{
 			daoUtil.closeResultSet(rs);
 			daoUtil.closeStatement(st);
+			daoUtil.closeConn(con);
 		}
 		return result;
 	}
@@ -199,7 +202,7 @@ public class ShoppingListDAO implements BananasDAO {
 		} catch (SQLException e) {
 			throw new DAOException(e);		
 		}finally{
-			//DAOUtils.closeConn(con);
+			daoUtil.closeConn(con);
 			daoUtil.closePrepared(ps);
 		}
 
@@ -223,7 +226,7 @@ public class ShoppingListDAO implements BananasDAO {
 		} catch (SQLException e) {
 			throw new DAOException("There was a problem deleting the shopping list.", e);
 		}finally{
-			//DAOUtils.closeConn(con);
+			daoUtil.closeConn(con);
 			daoUtil.closePrepared(ps);
 		}
 		}
@@ -248,6 +251,7 @@ public class ShoppingListDAO implements BananasDAO {
 		}finally{
 			daoUtil.closePrepared(ps);
 			daoUtil.closeResultSet(rs2);
+			daoUtil.closeConn(con);
 		}
 		return allLists;
 	}
@@ -276,6 +280,11 @@ public class ShoppingListDAO implements BananasDAO {
 				}//end for-each
 			} catch (SQLException e) {
 				throw new DAOException("There was a problem updating the shopping list.", e);
+			}finally{
+				daoUtil.closePrepared(ps);
+				daoUtil.closeConn(con);
 			}
-	}
+	}//end updateList
+	
+
 }

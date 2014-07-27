@@ -373,6 +373,25 @@ public class ShoppingListTest {
     	assertTrue(hasAList != null);
     }
     
+    @Test
+    public void testGetAllListsReturnsCorretValues(){
+    	DAOUtils daoUtil = new DAOUtils();
+    	ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+    	ShoppingList shoppingList = new ShoppingList("TestList");
+    	shoppingList.addList(testShoppingList);
+    	dao.saveListOfItems(shoppingList);
+    	Map<String, ArrayList<ListOfItems>> allLists = shoppingList.getAllShoppingListsFromDB();
+    	
+    	ArrayList<ListOfItems> testListSuccess = allLists.get("Pass");
+    	ListOfItems testReturn = testListSuccess.get(0);
+    	for(ListItem item : testReturn.getList()){
+    		System.out.println(item.getName());
+    		
+    	}
+    	
+    	
+    }
+    
     /**
      * Created by Bryan on 7/25/2014.
      */

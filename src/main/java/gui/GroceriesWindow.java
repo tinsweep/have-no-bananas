@@ -1,8 +1,6 @@
 package gui;
 
 import bananas.DAOUtils;
-import bananas.FoodItem;
-import bananas.ListItem;
 import bananas.ListOfItems;
 import bananas.ShoppingList;
 import bananas.ShoppingListDAO;
@@ -13,15 +11,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 import java.util.Map;
 
 /**
  * A GUI class to display Lists of groceries
  *
- * Created by Andy on 6/14/2014.
  */
-public class GroceriesWindow extends JFrame {
+public class GroceriesWindow extends JFrame implements WindowFocusListener {
 
     //Private Variables
     private JFrame mainWindow;
@@ -86,8 +84,6 @@ public class GroceriesWindow extends JFrame {
         c.gridx = 0;
         c.gridy = 1;
         mainPanel.add(listPanel, c);
-        
-        
 
         //Groceries List
         listModel = new DefaultListModel();
@@ -170,9 +166,9 @@ public class GroceriesWindow extends JFrame {
                         		}
                 		}//end if
             	}//end for
-            		listModel.removeAllElements();
-            		allLists = shoppingList.getAllShoppingListsFromDB();
-                    listPanel.repaint();
+
+                    listModel.removeElement(listName);
+                    mainWindow.repaint();
             	}//end action performed
             	
                 
@@ -192,7 +188,22 @@ public class GroceriesWindow extends JFrame {
             }
         });
 
+        mainWindow.addWindowFocusListener(this);
+
+        //Show the window
+        mainWindow.setVisible(true);
     }
-    //Show the window
-    
+
+    public void windowGainedFocus(WindowEvent e) {
+        listModel.removeAllElements();
+        allLists = shoppingList.getAllShoppingListsFromDB();
+        hasLists = allLists.get("Pass");
+        for(ListOfItems list : hasLists){
+            listModel.addElement(list.getName());
+        }//end for-each
+        mainPanel.repaint();
+    }
+
+    public void windowLostFocus(WindowEvent e) {}
+
 }

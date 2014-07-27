@@ -39,7 +39,7 @@ public class ListItem extends Item {
         private Double quantity;
         private String category;
         private String unit;
-        private Double price;
+        private Double price = 0.00;
 
         public CreateListItem(FoodItem val){
             foodItem = val;

@@ -120,4 +120,8 @@ public class ListItem extends Item {
         return category;
     }
 
+    public FoodItem getFoodItem() {
+        return foodItem;
+    }
+
 }

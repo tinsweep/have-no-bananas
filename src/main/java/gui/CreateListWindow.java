@@ -1,6 +1,8 @@
 package gui;
 
+import bananas.DAOUtils;
 import bananas.ShoppingList;
+import bananas.ShoppingListDAO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,6 +89,10 @@ public class CreateListWindow {
                 String name = nameField.getText();
                 shoppingList = new ShoppingList(name);
                 //add list to dc list
+                DAOUtils daoUtil = new DAOUtils();
+                ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+                Boolean isSaved = shoppingList.saveShoppingListToDB();
+
                 //refresh list on the DisplayWindow;
                 mainWindow.setVisible(false);
             }

@@ -21,9 +21,10 @@ public class ShoppingListDAO_TestDelete {
 	private ShoppingList li;	
 	private DAOUtils daoUtil = new DAOUtils();
 	
-	@Before public void setUp(){
-	con = DBConnector.getConnection(con);
-	dao = new ShoppingListDAO();
+	@Before 
+	public void setUp() throws SQLException{
+	con = daoUtil.getConnection();
+	dao = new ShoppingListDAO(daoUtil);
 	li = new ShoppingList(testTable);
 	dao.saveListOfItems(li);	
 	}
@@ -45,7 +46,7 @@ public class ShoppingListDAO_TestDelete {
 	}
 	@Test
 	public void test_That_DeleteList_Drops_Table_Name_from_ShoppingListNames(){
-		
+		dao.saveListOfItems(li);
 		dao.deleteList(testTable);
 		Integer numRows = null;
 		try{

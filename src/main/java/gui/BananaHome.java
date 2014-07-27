@@ -27,16 +27,15 @@ public class BananaHome extends JFrame {
     private JMenuItem exitMenuItem;
     private JLabel title;
     private JButton groceriesButton, fridgeButton;
-    private ShoppingList shoppingList;
     private Map<String, ArrayList<ListOfItems>> allLists;
     
 
     public BananaHome(DataContainer dataContainer) {
     	
     	//Add ShoppingList to database to test "Groceries" Button
-    	shoppingList = new ShoppingList("HomeList");
+    	
     	//get ShoppingLists
-    	allLists = shoppingList.getAllShoppingListsFromDB();
+    	
     	
         //Create JFrame
         mainWindow = new JFrame("...Have No Bananas");
@@ -85,7 +84,7 @@ public class BananaHome extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 
-                new GroceriesWindow(allLists);
+                new GroceriesWindow();
             }
         });
 

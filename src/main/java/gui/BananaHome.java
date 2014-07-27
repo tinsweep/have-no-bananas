@@ -1,9 +1,17 @@
 package gui;
 
 import javax.swing.*;
+
+import bananas.FoodItem;
+import bananas.ListItem;
+import bananas.ListOfItems;
+import bananas.ShoppingList;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Main GUI window of the application, used to access the ShoppingLists and Inventory
@@ -19,9 +27,17 @@ public class BananaHome extends JFrame {
     private JMenuItem exitMenuItem;
     private JLabel title;
     private JButton groceriesButton, fridgeButton;
+    private ShoppingList shoppingList;
+    private Map<String, ArrayList<ListOfItems>> allLists;
+    
 
     public BananaHome(DataContainer dataContainer) {
-
+    	
+    	//Add ShoppingList to database to test "Groceries" Button
+    	shoppingList = new ShoppingList("HomeList");
+    	//get ShoppingLists
+    	allLists = shoppingList.getAllShoppingListsFromDB();
+    	
         //Create JFrame
         mainWindow = new JFrame("...Have No Bananas");
 
@@ -68,7 +84,8 @@ public class BananaHome extends JFrame {
         groceriesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                new GroceriesWindow();
+                
+                new GroceriesWindow(allLists);
             }
         });
 
@@ -92,9 +109,6 @@ public class BananaHome extends JFrame {
         mainWindow.setName("mainWindow");
         mainPanel.setName("mainPanel");
 
-    }
-    public static void main (String[] args) {
-        //new BananaHome();
     }
 
 }

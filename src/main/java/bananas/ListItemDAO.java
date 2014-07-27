@@ -2,13 +2,17 @@ package bananas;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ListItemDAO {
 		private Connection con;
 		private PreparedStatement ps;
 		String insert = "INSERT INTO listItems VALUES(?, ?, ?)";
 		private DAOUtils daoUtil;
+		private ResultSet rs;
 		
 		public ListItemDAO(DAOUtils daoUtil){
 			this.daoUtil = daoUtil;
@@ -47,5 +51,27 @@ public class ListItemDAO {
 				throw new DAOException("There was a problem saving the to the list of ListItems.", e);			
 			}
 		}
+		
+		
+		/*to be added in next iteration of the program
+		 * public ArrayList<HashMap<ListItem, Integer>> getAllListItems(){
+			ArrayList<HashMap<ListItem, Integer>> allListItems = new ArrayList<HashMap<ListItem, Integer>>();
+			HashMap<ListItem, Integer> listOfListItems = new HashMap<ListItem, Integer>();
+			try{
+				con = daoUtil.getConnection();
+				ps = con.prepareStatement("SELECT * FROM listItems");
+				rs = ps.executeQuery();
+				while(rs.next()) {
+					
+				}
+					
+				}catch(SQLException e){
+					throw new DAOException("There was a problem retrieving all List Items from the database");
+				}
+						
+			
+			
+			return null;
+		}*/
 }
 

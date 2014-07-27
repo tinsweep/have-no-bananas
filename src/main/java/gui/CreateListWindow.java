@@ -88,6 +88,12 @@ public class CreateListWindow {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();
                 shoppingList = new ShoppingList(name);
+                Boolean isSaved = shoppingList.saveShoppingListToDB();
+                if(isSaved){
+                	
+                }else{
+                	
+                }
                 //add list to dc list
                 DAOUtils daoUtil = new DAOUtils();
                 ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
@@ -101,8 +107,4 @@ public class CreateListWindow {
         mainWindow.setVisible(true);
     }
 
-
-    public static void main (String[] args) {
-        new CreateListWindow();
-    }
 }

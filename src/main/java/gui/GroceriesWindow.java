@@ -191,8 +191,8 @@ public class GroceriesWindow extends JFrame {
                 new CreateListWindow();
             }
         });
-
+        mainWindow.setVisible(true);
     }
     //Show the window
-    
+     
 }

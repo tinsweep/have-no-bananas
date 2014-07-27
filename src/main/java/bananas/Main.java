@@ -10,9 +10,7 @@ public class Main {
 
     public static void main (String[] args) {
 
-        DataContainer dc = new DataContainer();
-
-        new BananaHome(dc);
+        new BananaHome();
 
     }
 }

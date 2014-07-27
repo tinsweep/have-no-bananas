@@ -88,17 +88,17 @@ public class CreateListWindow {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();
                 shoppingList = new ShoppingList(name);
-                Boolean isSaved = shoppingList.saveShoppingListToDB();
-                if(isSaved){
-                	
-                }else{
-                	
-                }
+
                 //add list to dc list
                 DAOUtils daoUtil = new DAOUtils();
                 ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
                 Boolean isSaved = shoppingList.saveShoppingListToDB();
 
+                if(isSaved){
+                	
+                }else{
+                	
+                }
                 //refresh list on the DisplayWindow;
                 mainWindow.setVisible(false);
             }

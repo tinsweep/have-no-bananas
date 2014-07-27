@@ -144,9 +144,4 @@ public class AddFoodWindow extends JFrame {
         mainWindow.setVisible(true);
     }
 
-
-    public static void main (String[] args) {
-        new AddFoodWindow();
-    }
-
 }

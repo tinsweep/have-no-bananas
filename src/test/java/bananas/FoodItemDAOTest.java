@@ -7,6 +7,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.After;
 import org.junit.Before;
@@ -75,6 +77,18 @@ public class FoodItemDAOTest {
 		fail("Expected Exception not thrown");
 	}
 	
+	
+	@Test
+	public void testGetAllFoodItems(){
+		fDAO.saveFoodItem(item, "SampleList");
+		FoodItem bread = new FoodItem("bread", "baked");
+		fDAO.saveFoodItem(bread, "SampleList");
+		ArrayList<FoodItem> allItems = fDAO.getAllFoodItems();
+		FoodItem savedItem = allItems.get(0);
+		FoodItem savedItem2 = allItems.get(1);
+		assertTrue(savedItem2.getName().equals("bread"));
+		assertTrue(savedItem.getName().equals("Apple"));
+	}
 	@Test(expected = DAOException.class)
 	public void testSaveListEX() throws SQLException{
 		//to avoid error in tear down

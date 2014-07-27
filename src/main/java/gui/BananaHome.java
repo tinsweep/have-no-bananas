@@ -35,14 +35,6 @@ public class BananaHome extends JFrame {
     	
     	//Add ShoppingList to database to test "Groceries" Button
     	shoppingList = new ShoppingList("HomeList");
-    	ShoppingList testList = new ShoppingList("Test");
-    	FoodItem lettuce    = new FoodItem("lettuce", "produce");
-    	FoodItem yogurt     = new FoodItem("yogurt", "dairy");
-    	ListItem lettuceListed = new ListItem.CreateListItem(lettuce).quantity(1.0).unit("head").price(1.0).create();
-    	ListItem yogurtListed = new ListItem.CreateListItem(yogurt).quantity(1.0).unit("pint").price(1.0).create();
-    	testList.addItem(lettuceListed);
-    	testList.addItem(yogurtListed);
-    	testList.saveShoppingListToDB();
     	//get ShoppingLists
     	allLists = shoppingList.getAllShoppingListsFromDB();
     	

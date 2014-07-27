@@ -96,7 +96,8 @@ public class FridgeWindow extends JFrame {
         addItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                new AddFoodWindow();
+            	
+                new AddFoodWindow("dummyName");
             }
         });
 

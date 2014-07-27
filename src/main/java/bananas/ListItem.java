@@ -119,5 +119,7 @@ public class ListItem extends Item {
     public String getCategory() {
         return category;
     }
-
+    public FoodItem getFoodItem(){
+    	return foodItem;
+    }
 }

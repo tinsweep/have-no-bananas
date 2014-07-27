@@ -16,6 +16,7 @@ public class ShoppingList implements ListOfItems {
     private DAOUtils daoUtil = new DAOUtils();
     private ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
     private ListItemDAO liDAO = new ListItemDAO(daoUtil);
+    private FoodItemDAO fDAO = new FoodItemDAO(daoUtil);
 
     public ShoppingList(String inputName){
         name = inputName;
@@ -156,7 +157,9 @@ public class ShoppingList implements ListOfItems {
     	// list items to table of items bought
     	for(ListItem item : itemsList){
     		liDAO.saveListItem(item, this.getName());
-    	}
+    		fDAO.saveFoodItem(item.getFoodItem(), this.getName());
+    		}
+    		
     	}catch(DAOException e){
     		return isSaved;
     	}
@@ -211,6 +214,12 @@ public class ShoppingList implements ListOfItems {
     	}
     	transferLists.put("Pass", allLists);
     	return transferLists; 
+    }
+    
+    public ArrayList<FoodItem> getAllFoodItems(){
+    	
+    	
+    	return null;
     }
     //@Override
     //Checks key attributes and listItems to see if input ShoppingList is the same

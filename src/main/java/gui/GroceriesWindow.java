@@ -129,12 +129,12 @@ public class GroceriesWindow extends JFrame {
                 //open selected ShoppingList
                 //new DisplayListWindow(shoppingList);
             	//display window is where all the adding/deleting of items takes place
-            	ShoppingList selectedList;
+            	
             	String listName = (String) groceriesList.getSelectedValue();
             	for(ListOfItems sList : hasLists){
             		if(sList.getName() == listName){
-            			selectedList = (ShoppingList) sList;
-            			new DisplayListWindow(selectedList);
+            		
+            			new DisplayListWindow(listName);
             		}
             	}
             	

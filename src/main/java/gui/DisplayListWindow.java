@@ -27,11 +27,10 @@ public class DisplayListWindow {
     private ShoppingList shoppingList;
     private String listName;
 
-    public DisplayListWindow (ShoppingList selectedList) {
+    public DisplayListWindow (final String listName) {
         //Get the list name
         //Test
-    	shoppingList = selectedList;
-        listName = "Test List";
+    	this.listName = listName;
 
         //Create the JFrame
         mainWindow = new JFrame(listName);
@@ -98,7 +97,7 @@ public class DisplayListWindow {
         addItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                new AddFoodWindow();
+                new AddFoodWindow(listName);
             }
         });
 
@@ -165,10 +164,4 @@ public class DisplayListWindow {
         listModel.removeElement(item);
     }
 
-   /* public static void main (String[] args) {
-        DisplayListWindow test;
-        test = new DisplayListWindow(shoppingList);
-
-
-    }*/
 }

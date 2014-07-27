@@ -110,8 +110,5 @@ public class BananaHome extends JFrame {
         mainPanel.setName("mainPanel");
 
     }
-    public static void main (String[] args) {
-        //new BananaHome();
-    }
 
 }

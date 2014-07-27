@@ -26,7 +26,7 @@ public class AddFoodWindow extends JFrame {
     private JTextField nameField, categoryField;
     private FoodItem food;
 
-    public AddFoodWindow() {
+    public AddFoodWindow(final String shoppingListName) {
 
         //Create JFrame
         mainWindow = new JFrame("Add an item");
@@ -146,8 +146,6 @@ public class AddFoodWindow extends JFrame {
     }
 
 
-    public static void main (String[] args) {
-        new AddFoodWindow();
-    }
+
 
 }

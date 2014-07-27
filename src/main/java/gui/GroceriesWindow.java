@@ -131,11 +131,15 @@ public class GroceriesWindow extends JFrame {
             	//display window is where all the adding/deleting of items takes place
             	
             	String listName = (String) groceriesList.getSelectedValue();
+            	if(hasLists != null){
             	for(ListOfItems sList : hasLists){
             		if(sList.getName() == listName){
             		
             			new DisplayListWindow(listName);
             		}
+            	}
+            	}else{
+            		new DisplayListWindow("There are no lists");
             	}
             	
                 mainWindow.setVisible(false);
@@ -153,10 +157,8 @@ public class GroceriesWindow extends JFrame {
                 //delete selected ShoppingList
             	
             	String listName = (String) groceriesList.getSelectedValue();
-            	for(ListOfItems sList : hasLists){
-            		if(sList.getName() == listName){
-            			dao.deleteList(listName);
-            		}
+            	if(listName != null){
+            	shoppingList.deleteShoppingListFromDB();
             	}
                 mainWindow.repaint();
                 mainWindow.setVisible(false);

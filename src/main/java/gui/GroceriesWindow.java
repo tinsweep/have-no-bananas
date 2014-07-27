@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -33,13 +34,14 @@ public class GroceriesWindow extends JFrame {
     private JMenu menu;
     private JMenuItem closeMenuItem;
     private JButton goButton, deleteListButton, createListButton;
-    private ShoppingList shoppingList;
+    private ShoppingList shoppingList = new ShoppingList("HomeList");
     private ArrayList<ListOfItems> hasLists;
     private ArrayList<ListOfItems> noLists;
     private DAOUtils daoUtil = new DAOUtils();
     private ShoppingListDAO dao = new ShoppingListDAO(daoUtil);
+    private Map<String, ArrayList<ListOfItems>> allLists;
 
-    public GroceriesWindow (Map<String, ArrayList<ListOfItems>> allLists) {
+    public GroceriesWindow () {
         //Create the JFrame
         mainWindow = new JFrame("Groceries Home");
         mainWindow.setSize(350,500);
@@ -100,7 +102,7 @@ public class GroceriesWindow extends JFrame {
         c.gridy = 2;
         listPanel.add(groceriesList, c);
         
-        
+        allLists = shoppingList.getAllShoppingListsFromDB();
         hasLists = allLists.get("Pass");
         noLists = allLists.get("Fail");
         
@@ -109,7 +111,7 @@ public class GroceriesWindow extends JFrame {
             listModel.addElement("There was an error retrieving the lists from the database. Its probably because the"
             		+ "guy who coded it has had too many brain inuries");
         }
-        if(hasLists == null){
+        if(hasLists == null || hasLists.size() == 0){
         	listModel.addElement("You have no lists");
         }
         else if (hasLists.size() > 0){
@@ -151,20 +153,33 @@ public class GroceriesWindow extends JFrame {
         c.gridx = 0;
         c.gridy = 4;
         mainPanel.add(deleteListButton, c);
-        goButton.addActionListener(new ActionListener() {
+        deleteListButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 //delete selected ShoppingList
             	
             	String listName = (String) groceriesList.getSelectedValue();
-            	if(listName != null){
-            	shoppingList.deleteShoppingListFromDB();
-            	}
-                mainWindow.repaint();
-                mainWindow.setVisible(false);
+            	if(listName != null && hasLists != null){
+            		for(ListOfItems sList : hasLists){
+            			if(sList.getName() == listName){
+                    		
+            				ShoppingList listToDelete = (ShoppingList)sList;
+            				Boolean isDeleted = listToDelete.deleteShoppingListFromDB();
+            				if(isDeleted){
+            					//wrong place to use this conditional, declare outside and use for repaint maybe
+                        		}
+                		}//end if
+            	}//end for
+            		listModel.removeAllElements();
+            		allLists = shoppingList.getAllShoppingListsFromDB();
+                    listPanel.repaint();
+            	}//end action performed
+            	
+                
             }
+            
         });
-
+        
         //create list button
         createListButton = new JButton("Create list");
         c.gridx = 0;
@@ -177,7 +192,7 @@ public class GroceriesWindow extends JFrame {
             }
         });
 
-        //Show the window
-        mainWindow.setVisible(true);
     }
+    //Show the window
+    
 }

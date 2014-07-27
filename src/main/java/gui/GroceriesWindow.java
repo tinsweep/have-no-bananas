@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -165,8 +166,7 @@ public class GroceriesWindow extends JFrame {
             				ShoppingList listToDelete = (ShoppingList)sList;
             				Boolean isDeleted = listToDelete.deleteShoppingListFromDB();
             				if(isDeleted){
-                        		
-                        		
+            					//wrong place to use this conditional, declare outside and use for repaint maybe
                         		}
                 		}//end if
             	}//end for
@@ -192,7 +192,7 @@ public class GroceriesWindow extends JFrame {
             }
         });
 
-        //Show the window
-        mainWindow.setVisible(true);
     }
+    //Show the window
+    
 }

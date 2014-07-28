@@ -1,11 +1,14 @@
 package gui;
 
+import bananas.DAOUtils;
 import bananas.FoodItem;
 import bananas.ListItem;
 import bananas.ListOfItems;
 import bananas.ShoppingList;
+import bananas.ShoppingListDAO;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,11 +37,15 @@ public class DisplayListWindow extends JFrame implements WindowFocusListener {
     private ListOfItems hasItems;
     private ListOfItems noItems;
     private Map<String, ListOfItems> shoppingListItems;
+    private ShoppingListDAO dao;
+    private DAOUtils daoUtil = new DAOUtils();
 
     public DisplayListWindow (final String givenListName) {
+        //initialize DAO, plan to change to wrapper methods in ShoppingList
+        dao = new ShoppingListDAO(daoUtil);
         //Get the list name
         //Test
-    	listName = givenListName.toString();
+        listName = givenListName.toString();
         shoppingList = new ShoppingList(listName);
 
         //Create the JFrame
@@ -135,6 +142,7 @@ public class DisplayListWindow extends JFrame implements WindowFocusListener {
                 if (deleteItem != null && hasItems.getList().size() > 0){
                     listModel.removeElement(deleteItem);
                     shoppingList.removeItemByName(deleteItem);
+                    dao.deleteItemFromList(deleteItem, shoppingList.getName());
                     Boolean updated = shoppingList.saveShoppingListToDB();
 
                     if (updated) {
@@ -155,54 +163,6 @@ public class DisplayListWindow extends JFrame implements WindowFocusListener {
         //Show the window
         mainWindow.setVisible(true);
     }
-
-    public JList<FoodItem> createJList() {
-        listModel = new DefaultListModel();
-        JList list = new JList(listModel);
-        groceriesList = new JList(listModel);
-        groceriesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        groceriesList.setLayoutOrientation(JList.VERTICAL);
-        JScrollPane listScroller = new JScrollPane(groceriesList);
-        listScroller.setPreferredSize(new Dimension(150, 200));
-
-        mainPanel.add(list);
-        mainPanel.repaint();
-
-        return list;
-    }
-    public JList<FoodItem> createJList(ShoppingList shoppingList) {
-        listModel = new DefaultListModel();
-        JList list = new JList(listModel);
-        groceriesList = new JList(listModel);
-        groceriesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        groceriesList.setLayoutOrientation(JList.VERTICAL);
-        JScrollPane listScroller = new JScrollPane(groceriesList);
-        listScroller.setPreferredSize(new Dimension(150, 200));
-
-        for (ListItem item : shoppingList.getList()) {
-            listModel.addElement(item);
-        }
-        mainPanel.add(list);
-        mainPanel.repaint();
-
-        return list;
-    }
-
-    public JList getGroceriesList() {
-        return groceriesList;
-    }
-
-    //Add items to the list
-    public void addItem(ListItem item) {
-        listModel.addElement(item);
-        mainPanel.repaint();
-    }
-
-    //Remove items from the list
-    public void removeItem(ListItem item) {
-        listModel.removeElement(item);
-    }
-
     public void windowGainedFocus(WindowEvent e) {
         //Code to get the list of lists
         listModel.removeAllElements();

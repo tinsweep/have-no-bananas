@@ -41,7 +41,7 @@ public class DisplayListWindow extends JFrame implements WindowFocusListener {
     private DAOUtils daoUtil = new DAOUtils();
 
     public DisplayListWindow (final String givenListName) {
-    	//initialize DAO
+    	//initialize DAO, plan to change to wrapper methods in ShoppingList
     	dao = new ShoppingListDAO(daoUtil);
         //Get the list name
         //Test

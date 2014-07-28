@@ -37,6 +37,7 @@ public class DisplayListWindow extends JFrame implements WindowFocusListener {
     private ListOfItems hasItems;
     private ListOfItems noItems;
     private Map<String, ListOfItems> shoppingListItems;
+
     private ShoppingListDAO dao;
     private DAOUtils daoUtil = new DAOUtils();
 

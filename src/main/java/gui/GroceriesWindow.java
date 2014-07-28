@@ -96,27 +96,27 @@ public class GroceriesWindow extends JFrame implements WindowFocusListener {
         groceriesList.setLayoutOrientation(JList.VERTICAL);
         JScrollPane listScroller = new JScrollPane(groceriesList);
         listScroller.setPreferredSize(new Dimension(150, 200));
-        
+
         c.gridx = 0;
         c.gridy = 2;
         listPanel.add(groceriesList, c);
-        
+
         allLists = shoppingList.getAllShoppingListsFromDB();
         hasLists = allLists.get("Pass");
         noLists = allLists.get("Fail");
-        
-        
+
+
         if(noLists != null){
             listModel.addElement("There was an error retrieving the lists from the database. Its probably because the"
-            		+ "guy who coded it has had too many brain inuries");
+                    + "guy who coded it has had too many brain injuries");
         }
         if(hasLists == null || hasLists.size() == 0){
-        	listModel.addElement("You have no lists");
+            listModel.addElement("You have no lists");
         }
         else if (hasLists.size() > 0){
-        	for(ListOfItems list : hasLists){
-        		listModel.addElement(list.getName());
-        }//end for-each
+            for(ListOfItems list : hasLists){
+                listModel.addElement(list.getName());
+            }//end for-each
         }//end if
 
         //"Go" button (select highlighted list item)
@@ -129,20 +129,20 @@ public class GroceriesWindow extends JFrame implements WindowFocusListener {
             public void actionPerformed(ActionEvent event) {
                 //open selected ShoppingList
                 //new DisplayListWindow(shoppingList);
-            	//display window is where all the adding/deleting of items takes place
-            	
-            	String listName = (String) groceriesList.getSelectedValue();
-            	if(hasLists != null){
-            	for(ListOfItems sList : hasLists){
-            		if(sList.getName() == listName){
-            		
-            			new DisplayListWindow(listName);
-            		}
-            	}
-            	}else{
-            		new DisplayListWindow("There are no lists");
-            	}
-            	
+                //display window is where all the adding/deleting of items takes place
+
+                String listName = (String) groceriesList.getSelectedValue();
+                if(hasLists != null){
+                    for(ListOfItems sList : hasLists){
+                        if(sList.getName() == listName){
+
+                            new DisplayListWindow(listName);
+                        }
+                    }
+                }else{
+                    new DisplayListWindow("There are no lists");
+                }
+
                 mainWindow.setVisible(false);
             }
         });
@@ -156,26 +156,26 @@ public class GroceriesWindow extends JFrame implements WindowFocusListener {
             @Override
             public void actionPerformed(ActionEvent event) {
                 //delete selected ShoppingList
-            	
-            	String listName = (String) groceriesList.getSelectedValue();
-            	if(listName != null && hasLists != null){
-            		for(ListOfItems sList : hasLists){
-            			if(sList.getName() == listName){
-                    		
-            				ShoppingList listToDelete = (ShoppingList)sList;
-            				Boolean isDeleted = listToDelete.deleteShoppingListFromDB();
-            				if(isDeleted){
-            					//wrong place to use this conditional, declare outside and use for repaint maybe
-                        		}
-                		}//end if
-            	}//end for
+
+                String listName = (String) groceriesList.getSelectedValue();
+                if(listName != null && hasLists != null){
+                    for(ListOfItems sList : hasLists){
+                        if(sList.getName() == listName){
+
+                            ShoppingList listToDelete = (ShoppingList)sList;
+                            Boolean isDeleted = listToDelete.deleteShoppingListFromDB();
+                            if(isDeleted){
+                                //wrong place to use this conditional, declare outside and use for repaint maybe
+                            }
+                        }//end if
+                    }//end for
 
                     listModel.removeElement(listName);
                     mainWindow.repaint();
-            	}//end action performed
+                }//end action performed
             }
         });
-        
+
         //create list button
         createListButton = new JButton("Create list");
         c.gridx = 0;
@@ -198,11 +198,13 @@ public class GroceriesWindow extends JFrame implements WindowFocusListener {
         listModel.removeAllElements();
         allLists = shoppingList.getAllShoppingListsFromDB();
         hasLists = allLists.get("Pass");
-        for(ListOfItems list : hasLists){
-            listModel.addElement(list.getName());
-        }//end for-each
+        if(hasLists != null){
+            for(ListOfItems list : hasLists){
+                listModel.addElement(list.getName());
+            }//end for-each
+        }
         mainPanel.repaint();
-     }
+    }
 
     public void windowLostFocus(WindowEvent e) {}
 }

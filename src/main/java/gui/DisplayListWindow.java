@@ -1,11 +1,14 @@
 package gui;
 
+import bananas.DAOUtils;
 import bananas.FoodItem;
 import bananas.ListItem;
 import bananas.ListOfItems;
 import bananas.ShoppingList;
+import bananas.ShoppingListDAO;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +38,12 @@ public class DisplayListWindow extends JFrame implements WindowFocusListener {
     private ListOfItems noItems;
     private Map<String, ListOfItems> shoppingListItems;
 
+    private ShoppingListDAO dao;
+    private DAOUtils daoUtil = new DAOUtils();
+
     public DisplayListWindow (final String givenListName) {
+    	//initialize DAO, plan to change to wrapper methods in ShoppingList
+    	dao = new ShoppingListDAO(daoUtil);
         //Get the list name
         //Test
     	listName = givenListName.toString();
@@ -135,6 +143,7 @@ public class DisplayListWindow extends JFrame implements WindowFocusListener {
                 if (deleteItem != null && hasItems.getList().size() > 0){
                     listModel.removeElement(deleteItem);
                     shoppingList.removeItemByName(deleteItem);
+                    dao.deleteItemFromList(deleteItem, shoppingList.getName());
                     Boolean updated = shoppingList.saveShoppingListToDB();
 
                     if (updated) {

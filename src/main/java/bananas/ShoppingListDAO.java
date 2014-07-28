@@ -207,6 +207,25 @@ public class ShoppingListDAO implements BananasDAO {
 		}
 
 	}
+	
+	public void deleteItemFromList(String itemName, String listName){
+		boolean notTable = tableExists(listName);
+		if(!notTable){
+			throw new DAOException("This table does not exist");
+		}
+		try {
+			con = daoUtil.getConnection();
+			ps = con.prepareStatement("DELETE FROM " + listName + " WHERE Name= ?");
+			ps.setString(1, itemName);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DAOException(e);		
+		}finally{
+			daoUtil.closeConn(con);
+			daoUtil.closePrepared(ps);
+		}
+		
+	}
 	/*
 	 * Deletes the specified shopping list and deletes its name from the table of shopping list names
 	 */

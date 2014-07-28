@@ -198,9 +198,11 @@ public class GroceriesWindow extends JFrame implements WindowFocusListener {
         listModel.removeAllElements();
         allLists = shoppingList.getAllShoppingListsFromDB();
         hasLists = allLists.get("Pass");
-        for(ListOfItems list : hasLists){
-            listModel.addElement(list.getName());
-        }//end for-each
+        if(hasLists != null){
+        	for(ListOfItems list : hasLists){
+        		listModel.addElement(list.getName());
+        	}//end for-each
+        }
         mainPanel.repaint();
      }
 

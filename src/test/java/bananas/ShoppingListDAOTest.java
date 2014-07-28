@@ -233,6 +233,16 @@ public class ShoppingListDAOTest {
 			dao.saveListOfItems(listToTest);
 			
 		}
+		@Test
+		public void testDelteItem(){
+			dao.saveListOfItems(listToTest);
+			dao.deleteItemFromList("Bacon", testTable);
+			ShoppingList returned = (ShoppingList) dao.getListOfItems(testTable);
+			for(ListItem item : returned.getList()){
+				System.out.println(item.getName());
+			}
+			assertTrue(returned.getList().size() == 1);
+		}
 		
 		@Test(expected = DAOException.class)
 		public void testSaveList() throws DAOException, SQLException{

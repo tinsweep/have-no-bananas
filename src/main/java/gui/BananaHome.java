@@ -27,20 +27,13 @@ public class BananaHome extends JFrame {
     private JMenuItem exitMenuItem;
     private JLabel title;
     private JButton groceriesButton, fridgeButton;
-    private Map<String, ArrayList<ListOfItems>> allLists;
-    
 
-    public BananaHome(DataContainer dataContainer) {
-    	
-    	//Add ShoppingList to database to test "Groceries" Button
-    	
-    	//get ShoppingLists
-    	
-    	
+    public BananaHome() {
+
         //Create JFrame
         mainWindow = new JFrame("...Have No Bananas");
 
-        mainWindow.setSize(500,500);
+        mainWindow.setSize(450,400);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create the main JPanel
@@ -88,26 +81,8 @@ public class BananaHome extends JFrame {
             }
         });
 
-        //Fridge (Inventory) button
-        fridgeButton = new JButton("Your Fridge");
-        c.gridx = 0;
-        c.gridy = 2;
-        mainPanel.add(fridgeButton, c);
-        fridgeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                new FridgeWindow();
-            }
-        });
-
-        SetComponentNames();
         mainWindow.setVisible(true);
     }
 
-    private void SetComponentNames(){
-        mainWindow.setName("mainWindow");
-        mainPanel.setName("mainPanel");
-
-    }
 
 }

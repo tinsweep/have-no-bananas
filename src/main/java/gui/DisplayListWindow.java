@@ -2,17 +2,22 @@ package gui;
 
 import bananas.FoodItem;
 import bananas.ListItem;
+import bananas.ListOfItems;
 import bananas.ShoppingList;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * GUI class to display and modify items in a ShoppingList.
  */
-public class DisplayListWindow {
+public class DisplayListWindow extends JFrame implements WindowFocusListener {
     //Private Variables
     private JFrame mainWindow;
     private JPanel mainPanel, listPanel;
@@ -26,11 +31,15 @@ public class DisplayListWindow {
     private JButton addItemButton, removeItemButton;
     private ShoppingList shoppingList;
     private String listName;
+    private ListOfItems hasItems;
+    private ListOfItems noItems;
+    private Map<String, ListOfItems> shoppingListItems;
 
-    public DisplayListWindow (final String listName) {
+    public DisplayListWindow (final String givenListName) {
         //Get the list name
         //Test
-    	this.listName = listName;
+    	listName = givenListName.toString();
+        shoppingList = new ShoppingList(listName);
 
         //Create the JFrame
         mainWindow = new JFrame(listName);
@@ -89,6 +98,18 @@ public class DisplayListWindow {
         c.gridy = 1;
         listPanel.add(groceriesList, c);
 
+        shoppingListItems = shoppingList.getShoppingListFromDB(listName);
+        hasItems = shoppingListItems.get("Pass");
+        noItems = shoppingListItems.get("Fail");
+
+        if (hasItems.getList().size() > 0){
+            ArrayList <ListItem> showList = hasItems.getList();
+            for (int idx = 0; idx < showList.size(); idx++){
+                listModel.addElement(showList.get(idx).getName());
+            }
+        } else {
+            listModel.addElement("No items in list.");
+        }
         //Add item button
         addItemButton = new JButton("Add item");
         c.gridx = 0;
@@ -110,8 +131,26 @@ public class DisplayListWindow {
             @Override
             public void actionPerformed(ActionEvent event) {
                 //Remove item from list
+                String deleteItem = (String) groceriesList.getSelectedValue();
+                if (deleteItem != null && hasItems.getList().size() > 0){
+                    listModel.removeElement(deleteItem);
+                    shoppingList.removeItemByName(deleteItem);
+                    Boolean updated = shoppingList.saveShoppingListToDB();
+
+                    if (updated) {
+                        JOptionPane.showMessageDialog(null, "Item removed.");
+                        listModel.removeElement(listName);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Failed to save item removal on DB");
+                    }
+                }
+
+                mainWindow.repaint();
+
             }
         });
+
+        mainWindow.addWindowFocusListener(this);
 
         //Show the window
         mainWindow.setVisible(true);
@@ -164,4 +203,22 @@ public class DisplayListWindow {
         listModel.removeElement(item);
     }
 
+    public void windowGainedFocus(WindowEvent e) {
+        //Code to get the list of lists
+        listModel.removeAllElements();
+        shoppingListItems = shoppingList.getShoppingListFromDB(listName);
+        hasItems = shoppingListItems.get("Pass");
+        noItems = shoppingListItems.get("Fail");
+        if (hasItems.getList().size() > 0){
+            ArrayList <ListItem> showList = hasItems.getList();
+            for (int idx = 0; idx < showList.size(); idx++){
+                listModel.addElement(showList.get(idx).getName());
+            }
+        } else {
+            listModel.addElement("No items in list.");
+        }
+        mainPanel.repaint();
+    }
+
+    public void windowLostFocus(WindowEvent e) {}
 }
